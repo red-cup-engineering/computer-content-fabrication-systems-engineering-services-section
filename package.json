@@ -1,5 +1,5 @@
 {
-  "name": "@red-cup-engineering/computer-content-fabrication-system-engineering-services-section",
+  "name": "@red-cup-engineering/computer-content-fabrication-systems-engineering-services-section",
   "version": "0.1.1",
   "private": false,
   "type": "module",
@@ -7,7 +7,7 @@
   "description": "The commerce-and-acceptance layer of on-demand content fabrication: kind profiles, order admission, quotes, realization plans, per-kind assays that issue SignCell acceptance cells, and realization receipts. Execution is delegated through a port to the agent harness; production is composed from upstream house services.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/red-cup-engineering/computer-content-fabrication-system-engineering-services-section.git"
+    "url": "git+https://github.com/red-cup-engineering/computer-content-fabrication-systems-engineering-services-section.git"
   },
   "keywords": [
     "content-fabrication",
@@ -76,6 +76,7 @@
   ],
   "scripts": {
     "test": "node --test test/*.test.mjs",
+    "test:package-consumer": "node --test test/consumer/*.test.mjs",
     "derive-x-market": "node tools/derive-x-market.mjs"
   },
   "dependencies": {
@@ -1224,8 +1225,8 @@
             "orderId": "ni:///sha-256;R5Wi6WEQZIu6FUE_4dv4kAP9DzclIn1_U6Rwc7j3Goo",
             "artifactId": "lean-proof-4a9b176e22272b88",
             "kind": "lean-proof",
-            "specificationDigest": "ni:///sha-256;m-h9xl-B8txqdEwIdCxDTvH1Dyn1EyM5OK3CLGf9Gic",
-            "planDigest": "ni:///sha-256;ljLf9BUSiDVFX46JWkKqPU99bZvwaF1nV5OPcP4gF0c",
+            "specificationDigest": "ni:///sha-256;QyYLjEylVnwry9PXUmcgnzEEQZ4tRkPscnX-6C083Bo",
+            "planDigest": "ni:///sha-256;F9lwT14cflli4_nJ3qrBxYbL-umWBtikLjdMM8pEcAU",
             "quote": {
               "type": "FabricationQuote",
               "version": 1,
@@ -1358,8 +1359,8 @@
             "orderId": "ni:///sha-256;2PwTWPXll3dhcCVZ7lFpfSDnBIedHIdKTYiBkvZtoug",
             "artifactId": "lean-proof-cb300a011d56bfd6",
             "kind": "lean-proof",
-            "specificationDigest": "ni:///sha-256;siZ8EJa2IJyY7t2nU9I7IcrgPiCnFvsoWyEDdYFEZfw",
-            "planDigest": "ni:///sha-256;yf4446hXZ1VGqWTgoNOqGF09f9EzAqve-PB7V-wX2xg",
+            "specificationDigest": "ni:///sha-256;E7WVm4z35g6ytA59L0wDAs8Zh3jkMcIgYUMZpAV5Vo8",
+            "planDigest": "ni:///sha-256;TWlS0bFuH8g1JKJ_vO63Hwhbjxh7meyQ4bewj_SOcj0",
             "quote": {
               "type": "FabricationQuote",
               "version": 1,
@@ -1492,8 +1493,8 @@
             "orderId": "ni:///sha-256;EUM8o2KhZezc7HgT0Yfl1so2YzGYEQ_apPGxu6RyxbI",
             "artifactId": "lean-proof-1f71b6f4c095971a",
             "kind": "lean-proof",
-            "specificationDigest": "ni:///sha-256;GvM0vKi23ml-LLa58YHVtDTDDLf5rurNte0TPZ-5G9I",
-            "planDigest": "ni:///sha-256;EQawY1dgo9x0Bwt0G-ZFHZcwdWrTrDgxVAFcmyJGjWw",
+            "specificationDigest": "ni:///sha-256;3ewMDZIG9_dFbzJyQOKMQjhQYcppFpVe-L-dEG1yFVk",
+            "planDigest": "ni:///sha-256;o1aATMvKeCnRtRdM_yO2JdY2it88L80WYMhmWwQy3q8",
             "quote": {
               "type": "FabricationQuote",
               "version": 1,

@@ -1,4 +1,4 @@
-# @red-cup-engineering/computer-content-fabrication-system-engineering-services-section
+# @red-cup-engineering/computer-content-fabrication-systems-engineering-services-section
 
 The commerce-and-acceptance layer of on-demand content fabrication: kind profiles, order admission, quotes, realization plans, per-kind assays that issue SignCell acceptance cells, and realization receipts. Execution is delegated through a port to the agent harness; production is composed from upstream house services.
 
