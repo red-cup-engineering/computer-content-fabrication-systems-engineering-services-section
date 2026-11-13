@@ -4,7 +4,7 @@
  * serialization). An output carries exactly one of `bytesBase64`, `text` (UTF-8) or `json`.
  */
 import { addressContent } from "@red-cup-engineering/computer-content-address-engineering-services-section/content-address";
-import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address";
+import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address-system";
 import { refuse } from "./refusal.mjs";
 
 const isRecord = (value) => value !== null && typeof value === "object" && !Array.isArray(value);

@@ -19,7 +19,7 @@
  * (`computer-systems-fabrication/knowledge/knowledge-production`) with the demand source swapped from
  * harness read events to buyer orders: order -> work order -> dispatch -> assay -> delivery -> market outcome.
  */
-import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address";
+import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address-system";
 import { assayFabricatedArtifact } from "./assay.mjs";
 import { receiveFabricationDelivery } from "./delivery.mjs";
 import { admitFabricationOrder } from "./order.mjs";

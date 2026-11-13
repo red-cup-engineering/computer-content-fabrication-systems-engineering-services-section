@@ -7,7 +7,7 @@
  * pattern of knowledge production): `accepted` here, `refused` from the orchestrator when this refuses.
  */
 import { admitArtifactFabricationRealizationReceipt } from "@red-cup-engineering/computer-data-engineering-services-section/artifact-fabrication";
-import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address";
+import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address-system";
 import { checkProvenanceClosure } from "@red-cup-engineering/prov-o-provenance-service/check-provenance-closure";
 import { composeProvenanceManifest } from "@red-cup-engineering/prov-o-provenance-service/compose-provenance-manifest";
 import { projectProvenanceAsProvO } from "@red-cup-engineering/prov-o-provenance-service/project-provenance-as-prov-o";

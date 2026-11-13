@@ -4,7 +4,7 @@
  * document is the canonical text of the order, the specification cites that document's digest, and
  * the data layer itself admitted the specification (the plan and receipt admissions re-validate it).
  */
-import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address";
+import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address-system";
 import { kindProfiles } from "./kinds.mjs";
 import { refuse } from "./refusal.mjs";
 import { orderDocument, sha256Hex } from "./specify.mjs";

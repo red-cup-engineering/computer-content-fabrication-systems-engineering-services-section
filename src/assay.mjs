@@ -13,7 +13,7 @@
  */
 import { tellingOf } from "@red-cup-engineering/signcraft/membrane";
 import { cones, documentOfSettlement, settleCells } from "@red-cup-engineering/signcraft/settle";
-import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address";
+import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address-system";
 import { projectionsOfAssay, readAdmission } from "./admission.mjs";
 import { admitOutput } from "./address.mjs";
 import { ASSAYS } from "./assays.mjs";

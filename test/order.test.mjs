@@ -64,7 +64,7 @@ test("admit: a tiered kind needs a tier among the profile's, and the tier prices
 });
 
 const assignment = (extra = {}) => ({
-  id: "urn:sha256:" + "a".repeat(64), type: "ResearchAssignmentAdmission", market: "urn:ame:curiosity-research-market-enterprise", buyer: "urn:ame:buyer",
+  id: "urn:sha256:" + "a".repeat(64), type: "ResearchAssignmentAdmission", market: "urn:ame:curiosity-research-market-operations-services-section", buyer: "urn:ame:buyer",
   question: "How did institutions treat the reproduction of the classified?", maxPriceMicros: 100_000_000, accountingUnit: "USD-micros",
   intendedUses: ["analysis"], permittedBuyers: ["urn:ame:buyer"], acceptance: { minimumSources: 3, claimWarrants: true, uncertainty: true, correctionIdentity: true, requiredReuseRights: ["analysis"] },
   deliveryBy: "2026-11-30T00:00:00Z", motivatingCandidates: [], ...extra,

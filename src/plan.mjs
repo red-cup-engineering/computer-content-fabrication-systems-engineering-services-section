@@ -5,7 +5,7 @@
  * knows: the ordered steps, each naming the upstream producer service and operation that performs it.
  */
 import { admitArtifactFabricationRealizationPlan } from "@red-cup-engineering/computer-data-engineering-services-section/artifact-fabrication";
-import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address";
+import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address-system";
 import { kindProfiles } from "./kinds.mjs";
 import { deepFreeze, refuse, refusing } from "./refusal.mjs";
 
