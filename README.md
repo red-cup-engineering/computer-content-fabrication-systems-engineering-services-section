@@ -49,7 +49,7 @@ order --admit--> specification --plan--> plan --dispatch(port)--> delivery
 
 | Operation | Packages |
 | --- | --- |
-| `quote`, `admit` | `computer-data-engineering-services-section/artifact-fabrication` (the specification record), `computer-content-address.../semiotic-content-address` (`semanticId`), `json-schema-services-section` (input schemas) |
+| `quote`, `admit` | `computer-data-engineering-services-section/artifact-fabrication` (the specification record), `computer-content-address.../semiotic-content-address` (`semanticId`), `json-schema-engineering-services-section` (input schemas) |
 | `plan` | `artifact-fabrication` (the realization plan); the profile's producers are named, not imported |
 | `assay` | `signcraft/membrane` (`tellingOf`) and `signcraft/settle` (`settleCells`, `documentOfSettlement`, `cones`) for witnessed cell issuance, canonical addresses and truth readings; `computer-content-address.../content-address` (`addressContent`), `research-claim-reproduction-service` (`reproduceStatedClaims`), `chart-specification-rendering-service` (validate, re-render), `prov-o-provenance-service` (compose, closure, PROV-O), `research-release-metadata-service` (consistency), `email-newsletter-engineering-services-section` (validate, render, serial manifest); through ports or result records: lean-check, CAIRN, `ebook-engineering-services-section` acceptance |
 | `receive` | `artifact-fabrication` (the receipt), `signcell/cell` (independent cell admission and addressed-evidence checks), `prov-o-provenance-service` |
