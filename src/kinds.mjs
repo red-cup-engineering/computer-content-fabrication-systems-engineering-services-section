@@ -5,7 +5,7 @@
  */
 import { readFileSync, readdirSync } from "node:fs";
 import { firstBareNumber } from "@red-cup-engineering/computer-data-engineering-services-section/artifact-fabrication";
-import { validateJsonSchema } from "@red-cup-engineering/json-schema-services-section/validation";
+import { validateJsonSchema } from "@red-cup-engineering/json-schema-engineering-services-section/validation";
 import { centsOf } from "./money.mjs";
 import { deepFreeze } from "./refusal.mjs";
 

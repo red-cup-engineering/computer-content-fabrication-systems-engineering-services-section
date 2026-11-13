@@ -26,7 +26,7 @@ The Leader set the first five prices; the lean tier amounts and the last three k
 
 ## Operations
 
-Pure exported functions (`index.mjs`), each also an NDJSON face under `scripts/` run by `@red-cup-engineering/javascript-node-services-section/operation`: one JSON request per line in, one answer per line out, `{ ok: true, ...record }` or `{ ok: false, refusal: { reason, message, path } }`, exit 2 if any line was refused. Each exports `operation`, the definition. Each has a document of its signature, refusals, precondition, postcondition, preserved frame, effect class and witness.
+Pure exported functions (`index.mjs`), each also an NDJSON face under `scripts/` run by `@red-cup-engineering/javascript-node-engineering-services-section/operation`: one JSON request per line in, one answer per line out, `{ ok: true, ...record }` or `{ ok: false, refusal: { reason, message, path } }`, exit 2 if any line was refused. Each exports `operation`, the definition. Each has a document of its signature, refusals, precondition, postcondition, preserved frame, effect class and witness.
 
 | Operation | Does | Document |
 | --- | --- | --- |

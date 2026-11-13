@@ -1,7 +1,7 @@
 /**
  * The section's operation definitions, in the house idiom: each is `{ name, description, inputSchema,
  * outputSchema, operation }`, bound to a pure function of this section and run as an NDJSON command by
- * `@red-cup-engineering/javascript-node-services-section/operation`. Faces return `{ ok: true, ...record }`
+ * `@red-cup-engineering/javascript-node-engineering-services-section/operation`. Faces return `{ ok: true, ...record }`
  * or `{ ok: false, refusal: { reason, message, path } }`.
  */
 import { assayFabricatedArtifact } from "./assay.mjs";

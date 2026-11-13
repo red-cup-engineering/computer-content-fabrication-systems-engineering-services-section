@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { readFileSync, readdirSync } from "node:fs";
-import { validateJsonSchema } from "@red-cup-engineering/json-schema-services-section/validation";
+import { validateJsonSchema } from "@red-cup-engineering/json-schema-engineering-services-section/validation";
 import { admitFabricationOrder } from "../src/order.mjs";
 import { kindIds, kindProfiles, loadProfiles, priceOf, profileProblems } from "../src/kinds.mjs";
 import { ASSAYS } from "../src/assays.mjs";

@@ -50,7 +50,7 @@
     },
     {
       "id": "workspace-svg",
-      "package": "@red-cup-engineering/computer-systems-fabrication-engineering-services-section",
+      "package": "@red-cup-engineering/computer-systems-fabrication-life-cycle-engineering-services-section",
       "operation": "analysis/workspace/svg dependencyGraphSvg; analysis/workspace/symbol-svg symbolGraphSvg",
       "role": "Lays out and draws dependency and symbol graphs as SVG.",
       "source": "registry"

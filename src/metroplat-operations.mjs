@@ -2,7 +2,7 @@
  * The MetroPlat declarations, bound to `@red-cup-engineering/relating` (an optional peer: a host that
  * declares operations has it). Import this module only where it is installed.
  */
-import { schemaFrom } from "@red-cup-engineering/json-schema-services-section/contracts";
+import { schemaFrom } from "@red-cup-engineering/json-schema-engineering-services-section/contracts";
 import { operationDeclaration } from "@red-cup-engineering/relating/operation-declaration";
 import { declareOperations } from "./declare.mjs";
 

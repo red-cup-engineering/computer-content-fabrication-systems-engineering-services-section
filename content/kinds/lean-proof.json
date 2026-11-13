@@ -68,7 +68,7 @@
     },
     {
       "id": "lean-check",
-      "package": "@red-cup-engineering/lean-system-services-section",
+      "package": "@red-cup-engineering/computer-proofing-lean-system-services-section",
       "operation": "check/plan planLeanCheck + check/run runLeanCheck",
       "role": "Builds the proof inside the lean scope and inspects the declaration's axioms.",
       "source": "registry"
@@ -120,7 +120,7 @@
       "id": "lean-check-clean",
       "statement": "lean-check of the module succeeded: exit zero, no compiler error, output complete, scope cleared, source unchanged.",
       "uses": [
-        "@red-cup-engineering/lean-system-services-section"
+        "@red-cup-engineering/computer-proofing-lean-system-services-section"
       ]
     },
     {
@@ -132,7 +132,7 @@
       "id": "axioms-allowed",
       "statement": "The declaration depends on no axiom outside the allowed set and not on sorryAx.",
       "uses": [
-        "@red-cup-engineering/lean-system-services-section"
+        "@red-cup-engineering/computer-proofing-lean-system-services-section"
       ]
     }
   ],
@@ -179,7 +179,7 @@
       "kind": "standard",
       "authority": "561 Group lean-engineering-services-section",
       "revision": "0.2.2",
-      "locator": "@red-cup-engineering/lean-system-services-section/check/admission",
+      "locator": "@red-cup-engineering/computer-proofing-lean-system-services-section/check/admission",
       "applicability": "The check deliverable.",
       "statement": "A check succeeds only when exit zero, no compiler error, complete output, a cleared scope and unchanged source all hold."
     },

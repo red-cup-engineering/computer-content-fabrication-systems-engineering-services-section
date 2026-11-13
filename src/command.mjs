@@ -1,4 +1,4 @@
-import { runJavascriptNodeOperation } from "@red-cup-engineering/javascript-node-services-section/operation";
+import { runJavascriptNodeOperation } from "@red-cup-engineering/javascript-node-engineering-services-section/operation";
 import { isRefusal } from "./refusal.mjs";
 
 /** The output every operation shares: a success carrying ok: true with its record, or a refusal carrying ok: false. */

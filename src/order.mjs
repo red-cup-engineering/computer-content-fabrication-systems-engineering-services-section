@@ -10,7 +10,7 @@
  * module reads the admitted record and keeps its id as the order's market reference.
  */
 import { admitArtifactFabricationSpecification } from "@red-cup-engineering/computer-data-engineering-services-section/artifact-fabrication";
-import { validateJsonSchema } from "@red-cup-engineering/json-schema-services-section/validation";
+import { validateJsonSchema } from "@red-cup-engineering/json-schema-engineering-services-section/validation";
 import { semanticId } from "@red-cup-engineering/computer-content-address-engineering-services-section/semiotic-content-address";
 import { kindIds, kindProfiles, priceOf, turnaroundOf } from "./kinds.mjs";
 import { centsOf, centsOfMicros } from "./money.mjs";
