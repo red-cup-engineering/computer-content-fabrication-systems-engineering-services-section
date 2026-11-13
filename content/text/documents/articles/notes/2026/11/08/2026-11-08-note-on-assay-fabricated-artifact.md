@@ -1,4 +1,10 @@
-# assayFabricatedArtifact
+---
+title: "assayFabricatedArtifact"
+description: "assayFabricatedArtifact({ admission, delivery }, { profiles?, ports?"
+date-created: 2026-11-08
+type: note
+name: assay-fabricated-artifact
+---
 
 `assayFabricatedArtifact({ admission, delivery }, { profiles?, ports? }) -> FabricationAssayResult | FabricationAssayRefusal`
 

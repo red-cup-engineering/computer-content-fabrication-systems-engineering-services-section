@@ -1,4 +1,10 @@
-# planFabrication
+---
+title: "planFabrication"
+description: "planFabrication(specification: ArtifactFabricationSpecification, { profiles?"
+date-created: 2026-11-08
+type: note
+name: plan-fabrication
+---
 
 `planFabrication(specification: ArtifactFabricationSpecification, { profiles? }) -> FabricationPlan | FabricationPlanRefusal`
 

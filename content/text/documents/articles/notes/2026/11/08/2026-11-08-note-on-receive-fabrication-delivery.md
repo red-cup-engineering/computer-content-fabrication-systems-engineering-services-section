@@ -1,4 +1,10 @@
-# receiveFabricationDelivery
+---
+title: "receiveFabricationDelivery"
+description: "receiveFabricationDelivery({ admission, delivery, assay, receivedAt }, { profiles?"
+date-created: 2026-11-08
+type: note
+name: receive-fabrication-delivery
+---
 
 `receiveFabricationDelivery({ admission, delivery, assay, receivedAt }, { profiles? }) -> FabricationDeliveryReceipt | FabricationDeliveryRefusal`
 

@@ -1,4 +1,10 @@
-# admitFabricationOrder
+---
+title: "admitFabricationOrder"
+description: "admitFabricationOrder(candidate: FabricationOrderCandidate, { profiles?, now?"
+date-created: 2026-11-08
+type: note
+name: admit-fabrication-order
+---
 
 `admitFabricationOrder(candidate: FabricationOrderCandidate, { profiles?, now? }) -> FabricationOrderAdmission | FabricationOrderRefusal`
 

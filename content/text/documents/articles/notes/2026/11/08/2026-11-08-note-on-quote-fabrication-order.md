@@ -1,4 +1,10 @@
-# quoteFabricationOrder
+---
+title: "quoteFabricationOrder"
+description: "quoteFabricationOrder({ kind, tier?, inputs?"
+date-created: 2026-11-08
+type: note
+name: quote-fabrication-order
+---
 
 `quoteFabricationOrder({ kind, tier?, inputs? }, { profiles? }) -> FabricationQuote | FabricationQuoteRefusal`
 

@@ -1,4 +1,10 @@
-# order-<kind> (the fabrication offers)
+---
+title: "order-<kind> (the fabrication offers)"
+description: "order-research-paper, order-research-paper-text, order-corpus-research-paper, order-lean-proof-routine, order-lean-proof-standard, order-lean-proof-advanced, order-svg-chart, order-svg-diagram, order-ebook, order-newsletter-issue,…"
+date-created: 2026-11-08
+type: note
+name: order-offers
+---
 
 `order-research-paper`, `order-research-paper-text`, `order-corpus-research-paper`, `order-lean-proof-routine`, `order-lean-proof-standard`, `order-lean-proof-advanced`, `order-svg-chart`, `order-svg-diagram`, `order-ebook`, `order-newsletter-issue`, `order-fiction-serial`
 

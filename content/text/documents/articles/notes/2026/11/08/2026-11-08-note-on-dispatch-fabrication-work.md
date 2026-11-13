@@ -1,4 +1,10 @@
-# dispatchFabricationWork (the executor port)
+---
+title: "dispatchFabricationWork (the executor port)"
+description: "dispatchFabricationWork(executor, workOrder, { signal?"
+date-created: 2026-11-08
+type: note
+name: dispatch-fabrication-work
+---
 
 `dispatchFabricationWork(executor, workOrder, { signal? }) -> FabricationDispatch | FabricationDispatchRefusal`
 

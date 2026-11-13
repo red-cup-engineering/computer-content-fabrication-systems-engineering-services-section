@@ -30,13 +30,13 @@ Pure exported functions (`index.mjs`), each also an NDJSON face under `scripts/`
 
 | Operation | Does | Document |
 | --- | --- | --- |
-| `quoteFabricationOrder` | price and turnaround of a kind (at a tier) | [quote](docs/operations/quote-fabrication-order.md) |
-| `admitFabricationOrder` | buyer order, or a curiosity-market assignment admission, to an `ArtifactFabricationSpecification` | [admit](docs/operations/admit-fabrication-order.md) |
-| `planFabrication` | specification to realization plan: ordered steps naming the upstream producer per step | [plan](docs/operations/plan-fabrication.md) |
-| `assayFabricatedArtifact` | per-kind acceptance, issuing SignCell cells | [assay](docs/operations/assay-fabricated-artifact.md) |
-| `receiveFabricationDelivery` | realization receipt, cells, PROV-O fragment; refuses any failed assay | [receive](docs/operations/receive-fabrication-delivery.md) |
-| `dispatchFabricationWork` | the executor port, delegating to the agent-harness carrier | [port](docs/operations/dispatch-fabrication-work.md) |
-| `order-<kind>` (11) | admit, plan and answer an order receipt: what the market sells | [offers](docs/operations/order-offers.md) |
+| `quoteFabricationOrder` | price and turnaround of a kind (at a tier) | [quote](content/text/documents/articles/notes/2026/11/08/2026-11-08-note-on-quote-fabrication-order.md) |
+| `admitFabricationOrder` | buyer order, or a curiosity-market assignment admission, to an `ArtifactFabricationSpecification` | [admit](content/text/documents/articles/notes/2026/11/08/2026-11-08-note-on-admit-fabrication-order.md) |
+| `planFabrication` | specification to realization plan: ordered steps naming the upstream producer per step | [plan](content/text/documents/articles/notes/2026/11/08/2026-11-08-note-on-plan-fabrication.md) |
+| `assayFabricatedArtifact` | per-kind acceptance, issuing SignCell cells | [assay](content/text/documents/articles/notes/2026/11/08/2026-11-08-note-on-assay-fabricated-artifact.md) |
+| `receiveFabricationDelivery` | realization receipt, cells, PROV-O fragment; refuses any failed assay | [receive](content/text/documents/articles/notes/2026/11/08/2026-11-08-note-on-receive-fabrication-delivery.md) |
+| `dispatchFabricationWork` | the executor port, delegating to the agent-harness carrier | [port](content/text/documents/articles/notes/2026/11/08/2026-11-08-note-on-dispatch-fabrication-work.md) |
+| `order-<kind>` (11) | admit, plan and answer an order receipt: what the market sells | [offers](content/text/documents/articles/notes/2026/11/08/2026-11-08-note-on-order-offers.md) |
 
 The flow is the demand, work order, assay, delivery, market-outcome pattern of `computer-systems-fabrication/knowledge/knowledge-production`, with the demand source swapped from harness read events to buyer orders; `produceFabrication` is that loop.
 
@@ -62,7 +62,7 @@ order --admit--> specification --plan--> plan --dispatch(port)--> delivery
 
 ## Executor
 
-None is built here. `dispatchFabricationWork` is a port, `carrierExecutor` adapts the agent-harness carrier (`agencyWorkCarrier`) to it, and no default is wired: the carrier runs a duty the MetroPlat work rail allocated, under a provider lease, as a CLI session on the node. Tests use a fake. See the [port](docs/operations/dispatch-fabrication-work.md).
+None is built here. `dispatchFabricationWork` is a port, `carrierExecutor` adapts the agent-harness carrier (`agencyWorkCarrier`) to it, and no default is wired: the carrier runs a duty the MetroPlat work rail allocated, under a provider lease, as a CLI session on the node. Tests use a fake. See the [port](content/text/documents/articles/notes/2026/11/08/2026-11-08-note-on-dispatch-fabrication-work.md).
 
 ## Reference fixture
 
