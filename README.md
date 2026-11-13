@@ -14,7 +14,7 @@ A kind is data: `content/kinds/<kind>.json`, validated against `content/schema/k
 | --- | --- | --- | --- | --- |
 | `research-paper` | $100.00 | 72 hours | PDF, HTML, DOCX, JATS, claims record, PROV-O | research-claim-reproduction, chart-specification-rendering, csl-yaml, research-release-metadata, rdf-vocabulary-conformance, project-document-through-pandoc, prov-o-provenance |
 | `research-paper-text` | $50.00 | 48 hours | Markdown, HTML, PROV-O | csl-yaml, pandoc, prov-o |
-| `corpus-research-paper` | $100.00 | 72 hours | the full paper, and its corpus citations | the above, after CAIRN reads (`knowledge-system-server`) of a named house corpus: sociology, governance, agentics, philosophy or metaphysics |
+| `corpus-research-paper` | $100.00 | 72 hours | the full paper, and its corpus citations | the above, after CAIRN reads (`cairn`) of a named house corpus: sociology, governance, agentics, philosophy or metaphysics |
 | `lean-proof` | by declared tier: routine $20.00, standard $60.00, advanced $200.00 | 2, 12 or 72 hours | the Lean module, the clean lean-check result | `lean-engineering-services-section` lean-check |
 | `svg-chart` | $5.00 | 15 minutes | SVG, the Vega-Lite specification | chart-specification-rendering-service |
 | `svg-diagram` | $10.00 | 30 minutes | SVG, the graph it draws | computer-systems-fabrication workspace and symbol SVG, lean-blueprint-chart-service |

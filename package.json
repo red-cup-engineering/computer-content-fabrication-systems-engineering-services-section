@@ -767,7 +767,7 @@
               {
                 "ordinal": 1,
                 "id": "read-corpus",
-                "package": "@red-cup-engineering/knowledge-system-server",
+                "package": "@red-cup-engineering/cairn",
                 "operation": "content-reader and search/service (record and L-Space reads)"
               },
               {

@@ -109,7 +109,7 @@ test("plan: ordered steps name the upstream producer per step; every deliverable
 });
 
 test("plan: the corpus kind reads CAIRN first; the delegated kinds name their upstream packages", () => {
-  assert.equal(planned(admitted("corpus-research-paper", EXAMPLE_INPUTS["corpus-research-paper"])).steps[0].producer.package, "@red-cup-engineering/knowledge-system-server");
+  assert.equal(planned(admitted("corpus-research-paper", EXAMPLE_INPUTS["corpus-research-paper"])).steps[0].producer.package, "@red-cup-engineering/cairn");
   assert.ok(planned(admitted("ebook", EXAMPLE_INPUTS.ebook)).steps.some(({ producer }) => producer.package.endsWith("ebook-engineering-services-section")));
   assert.ok(planned(admitted("fiction-serial", EXAMPLE_INPUTS["fiction-serial"])).steps.some(({ producer }) => producer.package.endsWith("email-newsletter-engineering-services-section")));
 });

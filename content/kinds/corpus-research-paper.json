@@ -103,7 +103,7 @@
     },
     {
       "id": "cairn",
-      "package": "@red-cup-engineering/knowledge-system-server",
+      "package": "@red-cup-engineering/cairn",
       "operation": "content-reader and search/service (record and L-Space reads)",
       "role": "Reads the named house corpus: the records the paper may cite and be grounded in.",
       "source": "registry"
@@ -387,7 +387,7 @@
       "id": "corpus-grounded",
       "statement": "Every cited corpus record exists in the named corpus and at least the ordered minimum are cited.",
       "uses": [
-        "@red-cup-engineering/knowledge-system-server"
+        "@red-cup-engineering/cairn"
       ]
     }
   ],
