@@ -1,0 +1,226 @@
+{
+  "$schema": "../schema/kind-profile.schema.json",
+  "type": "FabricationKindProfile",
+  "version": 1,
+  "kind": "svg-chart",
+  "title": "SVG chart",
+  "summary": "A chart as SVG from a Vega-Lite specification, or from data and intent with the specification written by an agent; validated and re-rendered byte-for-byte.",
+  "inputSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "spec": {
+        "type": "object",
+        "description": "A Vega-Lite specification."
+      },
+      "data": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        },
+        "description": "Rows to chart, with intent."
+      },
+      "intent": {
+        "type": "string",
+        "minLength": 1,
+        "description": "What the chart should show."
+      },
+      "title": {
+        "type": "string"
+      }
+    },
+    "anyOf": [
+      {
+        "required": [
+          "spec"
+        ]
+      },
+      {
+        "required": [
+          "data",
+          "intent"
+        ]
+      }
+    ]
+  },
+  "producers": [
+    {
+      "id": "agent",
+      "package": "@red-cup-engineering/agent-harness-computer-system-engineering-services-section",
+      "operation": "carrier/agency-carrier",
+      "role": "Writes the Vega-Lite specification from data and intent when no specification is supplied.",
+      "source": "agent-harness"
+    },
+    {
+      "id": "validate",
+      "package": "@red-cup-engineering/chart-specification-rendering-service",
+      "operation": "validate-vega-lite-spec",
+      "role": "Validates the specification against Vega-Lite.",
+      "source": "registry"
+    },
+    {
+      "id": "render",
+      "package": "@red-cup-engineering/chart-specification-rendering-service",
+      "operation": "render-vega-lite-spec-as-svg",
+      "role": "Renders the specification to deterministic SVG.",
+      "source": "registry"
+    }
+  ],
+  "steps": [
+    {
+      "id": "specify-chart",
+      "producer": "agent",
+      "summary": "Write the Vega-Lite specification from data and intent, or accept the supplied one.",
+      "consumes": [
+        "order"
+      ],
+      "produces": [
+        "vega-lite-spec"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "validate-spec",
+      "producer": "validate",
+      "summary": "Validate the specification.",
+      "consumes": [
+        "vega-lite-spec"
+      ],
+      "produces": [
+        "spec"
+      ],
+      "dependsOn": [
+        "specify-chart"
+      ]
+    },
+    {
+      "id": "render-svg",
+      "producer": "render",
+      "summary": "Render the specification to SVG.",
+      "consumes": [
+        "spec"
+      ],
+      "produces": [
+        "svg"
+      ],
+      "dependsOn": [
+        "validate-spec"
+      ]
+    }
+  ],
+  "deliverables": [
+    {
+      "projection": "svg",
+      "mediaType": "image/svg+xml",
+      "target": "chart.svg"
+    },
+    {
+      "projection": "spec",
+      "mediaType": "application/json",
+      "target": "chart.vl.json"
+    }
+  ],
+  "assays": [
+    {
+      "id": "vega-lite-valid",
+      "statement": "The delivered specification validates as Vega-Lite.",
+      "uses": [
+        "@red-cup-engineering/chart-specification-rendering-service"
+      ]
+    },
+    {
+      "id": "svg-byte-deterministic",
+      "statement": "Rendering the delivered specification again yields exactly the delivered SVG bytes.",
+      "uses": [
+        "@red-cup-engineering/chart-specification-rendering-service"
+      ]
+    },
+    {
+      "id": "svg-safe",
+      "statement": "The SVG has an svg root and carries no script, event handler, foreignObject or external reference.",
+      "uses": []
+    }
+  ],
+  "price": {
+    "currency": "USD",
+    "basis": "fixed",
+    "amount": "$5.00"
+  },
+  "turnaround": {
+    "seconds": 900,
+    "label": "within 15 minutes of an activated order"
+  },
+  "constraints": [
+    {
+      "id": "content-address-identity",
+      "kind": "law",
+      "authority": "IETF RFC 6920",
+      "revision": "2013",
+      "locator": "https://www.rfc-editor.org/rfc/rfc6920",
+      "applicability": "Every delivered byte string.",
+      "statement": "A delivered artifact is named by the sha-256 ni name of its bytes; equal bytes have equal names, so acceptance is evidence about those bytes alone."
+    },
+    {
+      "id": "svg-1-1",
+      "kind": "standard",
+      "authority": "W3C",
+      "revision": "Scalable Vector Graphics (SVG) 1.1 (Second Edition)",
+      "locator": "https://www.w3.org/TR/SVG11/",
+      "applicability": "The SVG deliverable.",
+      "statement": "The deliverable is a well-formed SVG document."
+    },
+    {
+      "id": "vega-lite-grammar",
+      "kind": "law",
+      "authority": "Vega-Lite",
+      "revision": "5",
+      "locator": "https://vega.github.io/vega-lite/",
+      "applicability": "The chart specification.",
+      "statement": "A chart is the deterministic rendering of a valid Vega-Lite specification."
+    },
+    {
+      "id": "signcell-acceptance",
+      "kind": "standard",
+      "authority": "561 Group SignCell",
+      "revision": "0.12",
+      "locator": "@red-cup-engineering/signcell/cell",
+      "applicability": "Acceptance.",
+      "statement": "Acceptance is a SignCell cell per assay: subject the artifact ni, predicate the assay id, witnesses the assay evidence."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "chart-delivered",
+      "statement": "Deliver the chart as an SVG rendered from the delivered Vega-Lite specification.",
+      "constraints": [
+        "vega-lite-grammar",
+        "svg-1-1",
+        "content-address-identity"
+      ],
+      "projections": [
+        "svg",
+        "spec"
+      ],
+      "acceptance": [
+        "vega-lite-valid",
+        "svg-byte-deterministic",
+        "svg-safe"
+      ]
+    }
+  ],
+  "prohibitions": [
+    {
+      "id": "no-active-content",
+      "statement": "The SVG may not carry script, event handlers or external references.",
+      "constraints": [
+        "svg-1-1"
+      ],
+      "projections": [
+        "svg"
+      ],
+      "acceptance": [
+        "svg-safe"
+      ]
+    }
+  ]
+}

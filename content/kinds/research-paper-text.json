@@ -1,0 +1,276 @@
+{
+  "$schema": "../schema/kind-profile.schema.json",
+  "type": "FabricationKindProfile",
+  "version": 1,
+  "kind": "research-paper-text",
+  "title": "Research paper (text only)",
+  "summary": "A research paper as Markdown and HTML with resolved references and a PROV-O record; no typeset PDF, DOCX or JATS and no claims reproduction.",
+  "inputSchema": {
+    "type": "object",
+    "required": [
+      "title",
+      "thesis"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "subtitle": {
+        "type": "string"
+      },
+      "thesis": {
+        "type": "string",
+        "minLength": 1,
+        "description": "The question or proposition the paper answers."
+      },
+      "authors": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "license": {
+        "type": "string",
+        "default": "CC-BY-4.0"
+      },
+      "language": {
+        "type": "string",
+        "default": "en-US"
+      },
+      "keywords": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "producers": [
+    {
+      "id": "agent",
+      "package": "@red-cup-engineering/agent-harness-computer-system-engineering-services-section",
+      "operation": "carrier/agency-carrier",
+      "role": "Does the authoring or search the kind needs, under the order, through the agent-harness carrier.",
+      "source": "agent-harness"
+    },
+    {
+      "id": "authoring",
+      "package": "@red-cup-engineering/research-paper-authoring-service",
+      "operation": "planResearchPaperDraft",
+      "role": "The thesis-centered section plan the agent writes to.",
+      "source": "registry"
+    },
+    {
+      "id": "references",
+      "package": "@red-cup-engineering/csl-yaml-services-section",
+      "operation": "project-bibliography-records-as-csl-yaml",
+      "role": "Projects bibliography records to CSL YAML for citation resolution.",
+      "source": "registry"
+    },
+    {
+      "id": "render",
+      "package": "@red-cup-engineering/project-document-through-pandoc-service",
+      "operation": "render-manuscript",
+      "role": "Renders the manuscript to PDF, HTML, DOCX and JATS with a reproducible build receipt.",
+      "source": "registry"
+    },
+    {
+      "id": "provenance",
+      "package": "@red-cup-engineering/prov-o-provenance-service",
+      "operation": "compose-provenance-manifest",
+      "role": "Composes the render receipt with the declared people and projects PROV-O.",
+      "source": "registry"
+    }
+  ],
+  "steps": [
+    {
+      "id": "author-manuscript",
+      "producer": "agent",
+      "summary": "Write the manuscript and bibliography to the section plan.",
+      "consumes": [
+        "order"
+      ],
+      "produces": [
+        "manuscript",
+        "bibliography"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "resolve-references",
+      "producer": "references",
+      "summary": "Project bibliography records to CSL YAML.",
+      "consumes": [
+        "bibliography"
+      ],
+      "produces": [
+        "csl-references"
+      ],
+      "dependsOn": [
+        "author-manuscript"
+      ]
+    },
+    {
+      "id": "render-manuscript",
+      "producer": "render",
+      "summary": "Render the manuscript to Markdown and HTML with its build receipt.",
+      "consumes": [
+        "manuscript",
+        "csl-references"
+      ],
+      "produces": [
+        "markdown",
+        "html",
+        "render-receipt"
+      ],
+      "dependsOn": [
+        "resolve-references"
+      ]
+    },
+    {
+      "id": "compose-provenance",
+      "producer": "provenance",
+      "summary": "Compose the render receipt as PROV-O.",
+      "consumes": [
+        "render-receipt"
+      ],
+      "produces": [
+        "provenance"
+      ],
+      "dependsOn": [
+        "render-manuscript"
+      ]
+    }
+  ],
+  "deliverables": [
+    {
+      "projection": "markdown",
+      "mediaType": "text/markdown",
+      "target": "paper.md"
+    },
+    {
+      "projection": "html",
+      "mediaType": "text/html",
+      "target": "paper.html"
+    },
+    {
+      "projection": "provenance",
+      "mediaType": "application/ld+json",
+      "target": "prov.jsonld"
+    }
+  ],
+  "assays": [
+    {
+      "id": "render-receipt-closes",
+      "statement": "The render receipt names every delivered document by its ni name and its PROV fragment closes.",
+      "uses": [
+        "@red-cup-engineering/project-document-through-pandoc-service",
+        "@red-cup-engineering/prov-o-provenance-service"
+      ]
+    },
+    {
+      "id": "references-resolve",
+      "statement": "Every citekey the manuscript cites resolves in the delivered references.",
+      "uses": [
+        "@red-cup-engineering/csl-yaml-services-section"
+      ]
+    }
+  ],
+  "price": {
+    "currency": "USD",
+    "basis": "fixed",
+    "amount": "$50.00"
+  },
+  "turnaround": {
+    "seconds": 172800,
+    "label": "within 48 hours of an activated order"
+  },
+  "constraints": [
+    {
+      "id": "content-address-identity",
+      "kind": "law",
+      "authority": "IETF RFC 6920",
+      "revision": "2013",
+      "locator": "https://www.rfc-editor.org/rfc/rfc6920",
+      "applicability": "Every delivered byte string.",
+      "statement": "A delivered artifact is named by the sha-256 ni name of its bytes; equal bytes have equal names, so acceptance is evidence about those bytes alone."
+    },
+    {
+      "id": "prov-o-provenance",
+      "kind": "standard",
+      "authority": "W3C",
+      "revision": "PROV-O Recommendation 2013-04-30",
+      "locator": "https://www.w3.org/TR/prov-o/",
+      "applicability": "The provenance deliverable.",
+      "statement": "Provenance is stated as agents, activities and ni-addressed entities, and every reference closes."
+    },
+    {
+      "id": "signcell-acceptance",
+      "kind": "standard",
+      "authority": "561 Group SignCell",
+      "revision": "0.12",
+      "locator": "@red-cup-engineering/signcell/cell",
+      "applicability": "Acceptance.",
+      "statement": "Acceptance is a SignCell cell per assay: subject the artifact ni, predicate the assay id, witnesses the assay evidence."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "text-delivered",
+      "statement": "Deliver the paper whose title the order states as Markdown and HTML from one reproducible render.",
+      "constraints": [
+        "content-address-identity"
+      ],
+      "projections": [
+        "markdown",
+        "html"
+      ],
+      "acceptance": [
+        "render-receipt-closes",
+        "references-resolve"
+      ]
+    },
+    {
+      "id": "provenance-delivered",
+      "statement": "Deliver a PROV-O provenance record that closes over the render.",
+      "constraints": [
+        "prov-o-provenance",
+        "signcell-acceptance"
+      ],
+      "projections": [
+        "provenance"
+      ],
+      "acceptance": [
+        "render-receipt-closes"
+      ]
+    }
+  ],
+  "prohibitions": [
+    {
+      "id": "no-uncited-source",
+      "statement": "No cited source may be absent from the delivered references.",
+      "constraints": [
+        "content-address-identity"
+      ],
+      "projections": [
+        "markdown"
+      ],
+      "acceptance": [
+        "references-resolve"
+      ]
+    }
+  ]
+}
