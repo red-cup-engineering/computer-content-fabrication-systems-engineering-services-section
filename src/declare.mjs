@@ -10,7 +10,7 @@
  * is everything else.
  */
 import {
-  admitFabricationOrderOperation, assayFabricatedArtifactOperation, planFabricationOperation,
+  validateFabricationOrderOperation, checkFabricatedArtifactOperation, planFabricationOperation,
   quoteFabricationOrderOperation, receiveFabricationDeliveryOperation, orderOperation,
 } from "./operations.mjs";
 import { kindIds, kindProfiles } from "./kinds.mjs";
@@ -23,10 +23,10 @@ const withId = (schema, id) => ({ ...schema, $id: `${SCHEMA_BASE}${id}.json` });
 /** All declarations by operation name (kebab). */
 export function declareOperations({ operationDeclaration, schemaFrom }) {
   const definitions = [
-    ["admit-fabrication-order", admitFabricationOrderOperation],
+    ["admit-fabrication-order", validateFabricationOrderOperation],
     ["quote-fabrication-order", quoteFabricationOrderOperation],
     ["plan-fabrication", planFabricationOperation],
-    ["assay-fabricated-artifact", assayFabricatedArtifactOperation],
+    ["assay-fabricated-artifact", checkFabricatedArtifactOperation],
     ["receive-fabrication-delivery", receiveFabricationDeliveryOperation],
     ...kindIds().flatMap((kind) => {
       const profile = kindProfiles().get(kind);

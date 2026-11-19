@@ -17,7 +17,7 @@ export const niOfJson = (value) => semanticId(value);
  * Admit one delivered output: its projection, media type, form and address. The decoded value rides
  * along as `bytes` (and `text` where it is UTF-8) or `json`, for the assays; it is never part of a record.
  */
-export function admitOutput(output, path) {
+export function validateOutput(output, path) {
   if (!isRecord(output)) refuse("INVALID_DELIVERY", `${path} must be a JSON object`, path);
   const forms = ["bytesBase64", "text", "json"].filter((key) => key in output);
   const extras = Object.keys(output).filter((key) => !["projection", "mediaType", "bytesBase64", "text", "json"].includes(key));

@@ -8,10 +8,10 @@ import { declareOperations } from "./declare.mjs";
 
 export const declarations = declareOperations({ operationDeclaration, schemaFrom });
 
-export const admitFabricationOrderDeclaration = declarations["admit-fabrication-order"];
+export const validateFabricationOrderDeclaration = declarations["admit-fabrication-order"];
 export const quoteFabricationOrderDeclaration = declarations["quote-fabrication-order"];
 export const planFabricationDeclaration = declarations["plan-fabrication"];
-export const assayFabricatedArtifactDeclaration = declarations["assay-fabricated-artifact"];
+export const checkFabricatedArtifactDeclaration = declarations["assay-fabricated-artifact"];
 export const receiveFabricationDeliveryDeclaration = declarations["receive-fabrication-delivery"];
 export const orderResearchPaperDeclaration = declarations["order-research-paper"];
 export const orderResearchPaperTextDeclaration = declarations["order-research-paper-text"];

@@ -69,7 +69,7 @@ function conformancePasses({ evidence }) {
   return verdict(reasons, { findings: findings.length });
 }
 
-async function renderReceiptCloses({ evidence, outputs, specification }) {
+async function renderRecordCloses({ evidence, outputs, specification }) {
   const receipt = evidence.renderReceipt;
   if (!isRecord(receipt) || receipt.kind !== "manuscript-build-receipt" || !Array.isArray(receipt.outputs)) return fail("evidence.renderReceipt must be a manuscript-build-receipt");
   const reasons = [];
@@ -269,10 +269,10 @@ function serialManifestValid({ order }) {
 }
 
 /** Assay id to its check. A profile that names an assay with no check here is refused at assay time, never silently passed. */
-export const ASSAYS = Object.freeze({
+export const CHECKS = Object.freeze({
   "claims-reproduce": claimsReproduce,
   "conformance-passes": conformancePasses,
-  "render-receipt-closes": renderReceiptCloses,
+  "render-receipt-closes": renderRecordCloses,
   "metadata-consistent": metadataConsistent,
   "references-resolve": referencesResolve,
   "corpus-grounded": corpusGrounded,
