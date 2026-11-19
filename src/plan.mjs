@@ -4,7 +4,7 @@
  * and acceptance obligations) is admitted by the data layer; the plan adds what only the section
  * knows: the ordered steps, each naming the upstream producer service and operation that performs it.
  */
-import { admitArtifactFabricationRealizationPlan } from "@red-cup-engineering/computer-data-engineering-services-section/artifact-fabrication";
+import { validateArtifactFabricationRealizationPlan } from "@red-cup-engineering/computer-data-engineering-services-section/artifact-fabrication";
 import { semanticId } from "@red-cup-engineering/semiotic-content-address-system";
 import { kindProfiles } from "./kinds.mjs";
 import { deepFreeze, refuse, refusing } from "./refusal.mjs";
@@ -38,7 +38,7 @@ export function planFabrication(specification, { profiles = kindProfiles() } = {
     if (!same(specification.projections.map(({ id }) => id), profile.deliverables.map(({ projection }) => projection)) || !same(specification.acceptanceObligations.map(({ id }) => id), profile.assays.map(({ id }) => id))) {
       refuse("PROFILE_DRIFT", `the specification's projections or acceptance obligations are not the ${profile.kind} profile's`, "specification");
     }
-    const realizationPlan = admitArtifactFabricationRealizationPlan(specification, {
+    const realizationPlan = validateArtifactFabricationRealizationPlan(specification, {
       type: "ArtifactFabricationRealizationPlanCandidate", version: 1,
       artifactId: specification.artifact.id, specificationDigest: specification.specificationDigest,
       projectionIds: specification.projections.map(({ id }) => id),
