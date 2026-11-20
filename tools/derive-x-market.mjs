@@ -6,7 +6,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { kindIds, kindProfiles } from "../src/kinds.mjs";
 import {
-  validateFabricationOrderOperation, orderOperation, quoteFabricationOrderOperation,
+  admitFabricationOrderOperation, orderOperation, quoteFabricationOrderOperation,
 } from "../src/operations.mjs";
 
 const PACKAGE = new URL("../package.json", import.meta.url);
@@ -45,7 +45,7 @@ async function offer({ definition, file, price, title, tags, example }) {
 export async function deriveXMarket() {
   const offers = [
     await offer({ definition: quoteFabricationOrderOperation, file: "quote-fabrication-order", price: "$0.01", title: "Quote a fabricated artifact", tags: ["content", "quote", "fabrication"], example: { kind: "research-paper" } }),
-    await offer({ definition: validateFabricationOrderOperation, file: "admit-fabrication-order", price: "$0.05", title: "Admit a fabrication order", tags: ["content", "order", "fabrication", "specification"], example: { type: "FabricationOrderCandidate", version: 1, kind: "svg-chart", buyer: { id: "example-buyer" }, inputs: EXAMPLE_INPUTS["svg-chart"], budget: { amount: "$5.00" }, placedAt: PLACED } }),
+    await offer({ definition: admitFabricationOrderOperation, file: "admit-fabrication-order", price: "$0.05", title: "Admit a fabrication order", tags: ["content", "order", "fabrication", "specification"], example: { type: "FabricationOrderCandidate", version: 1, kind: "svg-chart", buyer: { id: "example-buyer" }, inputs: EXAMPLE_INPUTS["svg-chart"], budget: { amount: "$5.00" }, placedAt: PLACED } }),
   ];
   for (const kind of kindIds()) {
     const profile = kindProfiles().get(kind);

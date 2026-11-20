@@ -20,23 +20,23 @@
  * harness read events to buyer orders: order -> work order -> dispatch -> assay -> delivery -> market outcome.
  */
 import { semanticId } from "@red-cup-engineering/semiotic-content-address-system";
-import { checkFabricatedArtifact } from "./assay.mjs";
+import { assayFabricatedArtifact } from "./assay.mjs";
 import { receiveFabricationDelivery } from "./delivery.mjs";
-import { validateFabricationOrder } from "./order.mjs";
+import { admitFabricationOrder } from "./order.mjs";
 import { planFabrication } from "./plan.mjs";
-import { deepFreeze, refuse, refusingAsync, isRejection } from "./refusal.mjs";
+import { deepFreeze, refuse, refusingAsync, isRefusal } from "./refusal.mjs";
 
 const isRecord = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 const reasonOf = (error) => (error instanceof Error ? error.message : String(error));
 
 /** The work order for one admitted order and its plan: what the executor is asked to produce, and nothing it need not know. */
-export function fabricationWorkOrder(validation, plan) {
+export function fabricationWorkOrder(admission, plan) {
   return deepFreeze({
     type: "FabricationWorkOrder", version: 1,
-    lot: `urn:work-lot:fabrication:${validation.artifactId}`,
-    artifactId: validation.artifactId, kind: validation.kind, orderId: validation.orderId,
+    lot: `urn:work-lot:fabrication:${admission.artifactId}`,
+    artifactId: admission.artifactId, kind: admission.kind, orderId: admission.orderId,
     specificationDigest: plan.specificationDigest, planDigest: plan.planDigest,
-    order: validation.order, steps: plan.steps, agentSteps: plan.agentSteps, deliverables: plan.deliverables, assays: plan.assays,
+    order: admission.order, steps: plan.steps, agentSteps: plan.agentSteps, deliverables: plan.deliverables, assays: plan.assays,
     delivery: { type: "FabricationDeliveryCandidate", version: 1, note: "answer with this shape: artifactId, specificationDigest, producer { id, revision }, outputs [{ projection, mediaType, bytesBase64 | text | json }], evidence" },
   });
 }
@@ -107,23 +107,23 @@ const MAX_ATTEMPTS = 3;
  * @param {{ executor: object, record?: (outcome: object) => Promise<unknown>, ports?: object, profiles?: Map, now: string, signal?: AbortSignal }} binding
  */
 export async function produceFabrication(candidate, { executor = unboundExecutor, record, ports, profiles, now, signal } = {}) {
-  const validation = validateFabricationOrder(candidate, { profiles, now });
-  if (isRejection(validation)) return deepFreeze({ type: "FabricationProduction", version: 1, outcome: "refused-at-admission", refusal: validation });
-  const plan = planFabrication(validation.specification, { profiles });
-  if (isRejection(plan)) return deepFreeze({ type: "FabricationProduction", version: 1, outcome: "refused-at-planning", refusal: plan });
+  const admission = admitFabricationOrder(candidate, { profiles, now });
+  if (isRefusal(admission)) return deepFreeze({ type: "FabricationProduction", version: 1, outcome: "refused-at-admission", refusal: admission });
+  const plan = planFabrication(admission.specification, { profiles });
+  if (isRefusal(plan)) return deepFreeze({ type: "FabricationProduction", version: 1, outcome: "refused-at-planning", refusal: plan });
   const attempts = [];
   let earlier = [];
   for (let attempt = 1; attempt <= MAX_ATTEMPTS && signal?.aborted !== true; attempt += 1) {
-    const workOrder = fabricationWorkOrder(validation, plan);
+    const workOrder = fabricationWorkOrder(admission, plan);
     const dispatched = await dispatchFabricationWork(executor, earlier.length === 0 ? workOrder : { ...workOrder, earlierFailures: earlier }, { signal });
-    if (isRejection(dispatched)) { attempts.push({ attempt, outcome: "dispatch-refused", refusal: dispatched }); break; }
-    const check = await checkFabricatedArtifact({ admission: validation, delivery: dispatched.delivery }, { profiles, ports });
-    const received = isRejection(check) ? check : await receiveFabricationDelivery({ admission: validation, delivery: dispatched.delivery, assay: check, receivedAt: now }, { profiles });
-    const accepted = !isRejection(received);
+    if (isRefusal(dispatched)) { attempts.push({ attempt, outcome: "dispatch-refused", refusal: dispatched }); break; }
+    const assay = await assayFabricatedArtifact({ admission, delivery: dispatched.delivery }, { profiles, ports });
+    const received = isRefusal(assay) ? assay : await receiveFabricationDelivery({ admission, delivery: dispatched.delivery, assay, receivedAt: now }, { profiles });
+    const accepted = !isRefusal(received);
     const outcome = accepted ? received.marketOutcome : deepFreeze({
-      type: "FabricationMarketOutcome", version: 1, lot: workOrder.lot, provider: dispatched.delivery.producer?.id ?? "unknown", taskClass: `fabrication.${validation.kind}`, outcome: "refused",
+      type: "FabricationMarketOutcome", version: 1, lot: workOrder.lot, provider: dispatched.delivery.producer?.id ?? "unknown", taskClass: `fabrication.${admission.kind}`, outcome: "refused",
       evidence: `attempt ${attempt}: ${received.code}: ${received.message}`.slice(0, 400),
-      ...(validation.order.market === undefined ? {} : { market: validation.order.market }),
+      ...(admission.order.market === undefined ? {} : { market: admission.order.market }),
     });
     let recorded = false;
     if (typeof record === "function") {
@@ -135,8 +135,8 @@ export async function produceFabrication(candidate, { executor = unboundExecutor
   }
   const last = attempts.at(-1);
   return deepFreeze({
-    type: "FabricationProduction", version: 1, orderId: validation.orderId, artifactId: validation.artifactId, kind: validation.kind,
+    type: "FabricationProduction", version: 1, orderId: admission.orderId, artifactId: admission.artifactId, kind: admission.kind,
     outcome: last?.outcome === "accepted" ? "accepted" : "not-accepted", attempts,
-    digest: semanticId(JSON.parse(JSON.stringify({ orderId: validation.orderId, attempts: attempts.map(({ attempt, outcome }) => ({ attempt, outcome })) }))),
+    digest: semanticId(JSON.parse(JSON.stringify({ orderId: admission.orderId, attempts: attempts.map(({ attempt, outcome }) => ({ attempt, outcome })) }))),
   });
 }

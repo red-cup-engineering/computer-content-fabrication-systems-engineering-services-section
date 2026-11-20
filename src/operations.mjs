@@ -4,11 +4,11 @@
  * `@red-cup-engineering/node-js-function-engineering-services-section/operation`. Faces return `{ ok: true, ...record }`
  * or `{ ok: false, refusal: { reason, message, path } }`.
  */
-import { checkFabricatedArtifact } from "./assay.mjs";
+import { assayFabricatedArtifact } from "./assay.mjs";
 import { asFace, resultSchema } from "./command.mjs";
 import { receiveFabricationDelivery } from "./delivery.mjs";
 import { kindIds, kindProfiles } from "./kinds.mjs";
-import { validateFabricationOrder, quoteFabricationOrder } from "./order.mjs";
+import { admitFabricationOrder, quoteFabricationOrder } from "./order.mjs";
 import { planFabrication } from "./plan.mjs";
 
 const object = (properties, required = []) => ({ type: "object", required, additionalProperties: false, properties });
@@ -28,12 +28,12 @@ export const orderCandidateSchema = object({
   assignmentAdmission: record("The curiosity research market's admitted ResearchAssignmentAdmission, for the research paper kinds: its question, budget, delivery date and acceptance terms become the order's."),
 }, ["type", "version", "kind"]);
 
-export const validateFabricationOrderOperation = {
+export const admitFabricationOrderOperation = {
   name: "admitFabricationOrder",
   description: "Admits a buyer's order as an ArtifactFabricationSpecification bound to the order document, or refuses it: unknown kind, missing or invalid inputs, an unknown tier, a budget below the quote, or an assignment that does not fit.",
   inputSchema: orderCandidateSchema,
   outputSchema: resultSchema,
-  operation: asFace((candidate) => validateFabricationOrder(candidate)),
+  operation: asFace((candidate) => admitFabricationOrder(candidate)),
 };
 
 export const quoteFabricationOrderOperation = {
@@ -52,12 +52,12 @@ export const planFabricationOperation = {
   operation: asFace(({ specification }) => planFabrication(specification)),
 };
 
-export const checkFabricatedArtifactOperation = {
+export const assayFabricatedArtifactOperation = {
   name: "assayFabricatedArtifact",
   description: "Assays a delivery against its order: addresses every output, runs the kind's acceptance assays, and issues one SignCell cell per assay and artifact (subject the artifact's ni, predicate the assay id, told for or against by the assay's evidence).",
   inputSchema: object({ admission: record("The FabricationOrderAdmission."), delivery: record("The executor's FabricationDeliveryCandidate.") }, ["admission", "delivery"]),
   outputSchema: resultSchema,
-  operation: asFace((request) => checkFabricatedArtifact(request)),
+  operation: asFace((request) => assayFabricatedArtifact(request)),
 };
 
 export const receiveFabricationDeliveryOperation = {
@@ -71,12 +71,12 @@ export const receiveFabricationDeliveryOperation = {
 const camel = (name) => name.split("-").map((word, index) => (index === 0 ? word : word[0].toUpperCase() + word.slice(1))).join("");
 
 /** The compact answer of a sold order: what was admitted and planned, enough to place the work and no more. */
-export function orderRecord(validation, plan) {
+export function orderReceipt(admission, plan) {
   return {
     type: "FabricationOrderReceipt", version: 1,
-    orderId: validation.orderId, artifactId: validation.artifactId, kind: validation.kind,
-    specificationDigest: validation.specification.specificationDigest, planDigest: plan.planDigest,
-    quote: validation.quote,
+    orderId: admission.orderId, artifactId: admission.artifactId, kind: admission.kind,
+    specificationDigest: admission.specification.specificationDigest, planDigest: plan.planDigest,
+    quote: admission.quote,
     steps: plan.steps.map(({ ordinal, id, producer }) => ({ ordinal, id, package: producer.package, operation: producer.operation })),
     deliverables: plan.deliverables, assays: plan.assays,
   };
@@ -86,10 +86,10 @@ function orderFace(kind, tier) {
   return asFace((body) => {
     const profile = kindProfiles().get(kind);
     const inputs = profile.price.basis === "tier" ? { ...body.inputs, [profile.price.tierField]: tier } : body.inputs;
-    const validation = validateFabricationOrder({ type: "FabricationOrderCandidate", version: 1, kind, buyer: body.buyer, inputs, ...(body.budget === undefined ? {} : { budget: body.budget }), ...(body.placedAt === undefined ? {} : { placedAt: body.placedAt }) });
-    if (validation.type.endsWith("Refusal")) return validation;
-    const plan = planFabrication(validation.specification);
-    return plan.type.endsWith("Refusal") ? plan : orderRecord(validation, plan);
+    const admission = admitFabricationOrder({ type: "FabricationOrderCandidate", version: 1, kind, buyer: body.buyer, inputs, ...(body.budget === undefined ? {} : { budget: body.budget }), ...(body.placedAt === undefined ? {} : { placedAt: body.placedAt }) });
+    if (admission.type.endsWith("Refusal")) return admission;
+    const plan = planFabrication(admission.specification);
+    return plan.type.endsWith("Refusal") ? plan : orderReceipt(admission, plan);
   });
 }
 

@@ -43,8 +43,8 @@ function checkInputs(profile, inputs) {
     refuse("MISSING_INPUTS", `inputs must supply one of: ${alternatives.map((branch) => branch.required.join(" + ")).join(" | ")}`, "inputs", { oneOf: alternatives.map((branch) => branch.required) });
   }
   if (missing.length > 0) refuse("MISSING_INPUTS", `${profile.kind} needs inputs: ${missing.join(", ")}`, "inputs", { missing });
-  const result = validateJsonSchema(inputs, profile.inputSchema);
-  if (!result.valid) refuse("INVALID_INPUTS", `inputs do not satisfy the ${profile.kind} input schema: ${result.issues.slice(0, 3).map((issue) => `${issue.path || "/"} ${issue.message}`).join("; ")}`, "inputs");
+  const verdict = validateJsonSchema(inputs, profile.inputSchema);
+  if (!verdict.valid) refuse("INVALID_INPUTS", `inputs do not satisfy the ${profile.kind} input schema: ${verdict.issues.slice(0, 3).map((issue) => `${issue.path || "/"} ${issue.message}`).join("; ")}`, "inputs");
 }
 
 function budgetCents(budget) {
@@ -89,16 +89,16 @@ export function quoteFabricationOrder(request, { profiles = kindProfiles() } = {
 
 /** The order an assignment admission states, merged over the candidate's own inputs; and the clause that carries its terms. */
 function fromAssignment(candidate, profile) {
-  const validation = candidate.assignmentAdmission;
+  const admission = candidate.assignmentAdmission;
   if (!ASSIGNMENT_KINDS.has(profile.kind)) refuse("ASSIGNMENT_KIND_MISMATCH", `a research assignment admission orders a research paper kind, not ${profile.kind}`, "kind");
-  if (!isRecord(validation) || validation.type !== "ResearchAssignmentAdmission" || typeof validation.id !== "string" || !singleLine(validation.buyer) || !singleLine(validation.question)) {
+  if (!isRecord(admission) || admission.type !== "ResearchAssignmentAdmission" || typeof admission.id !== "string" || !singleLine(admission.buyer) || !singleLine(admission.question)) {
     refuse("INVALID_ASSIGNMENT", "assignmentAdmission must be the market's admitted ResearchAssignmentAdmission", "assignmentAdmission");
   }
-  if (validation.accountingUnit !== "USD-micros" || !Number.isSafeInteger(validation.maxPriceMicros) || validation.maxPriceMicros <= 0) refuse("INVALID_ASSIGNMENT", "the assignment's budget must be a positive integer in USD-micros", "assignmentAdmission.maxPriceMicros");
-  if (candidate.buyer !== undefined && candidate.buyer.id !== validation.buyer) refuse("ASSIGNMENT_BUYER_MISMATCH", "the order's buyer must be the assignment's buyer", "buyer.id");
-  const deliveryBy = Date.parse(validation.deliveryBy);
+  if (admission.accountingUnit !== "USD-micros" || !Number.isSafeInteger(admission.maxPriceMicros) || admission.maxPriceMicros <= 0) refuse("INVALID_ASSIGNMENT", "the assignment's budget must be a positive integer in USD-micros", "assignmentAdmission.maxPriceMicros");
+  if (candidate.buyer !== undefined && candidate.buyer.id !== admission.buyer) refuse("ASSIGNMENT_BUYER_MISMATCH", "the order's buyer must be the assignment's buyer", "buyer.id");
+  const deliveryBy = Date.parse(admission.deliveryBy);
   if (!Number.isFinite(deliveryBy)) refuse("INVALID_ASSIGNMENT", "the assignment must carry a deliveryBy instant", "assignmentAdmission.deliveryBy");
-  const terms = validation.acceptance ?? {};
+  const terms = admission.acceptance ?? {};
   if (!Number.isSafeInteger(terms.minimumSources) || terms.minimumSources < 1) refuse("INVALID_ASSIGNMENT", "the assignment's acceptance must state a positive integer minimumSources", "assignmentAdmission.acceptance.minimumSources");
   const gating = profile.assays.find(({ id }) => id === "references-resolve") ?? profile.assays[0];
   // The only number the terms add is the source count: a parameter referencing a claim measured from the admitted assignment.
@@ -106,7 +106,7 @@ function fromAssignment(candidate, profile) {
     type: "ArtifactFabricationClaim", version: 1, id: "assignment-minimum-sources", kind: "parameter",
     statement: "The admitted research assignment states its minimum source count.", status: "measured",
     quantity: { type: "ArtifactFabricationQuantity", value: terms.minimumSources, unit: "sources" },
-    basis: { type: "ArtifactFabricationMeasuredBasis", locator: `market:${validation.id}`, digest: semanticId(validation), derivation: "Read from acceptance.minimumSources of the admitted ResearchAssignmentAdmission." },
+    basis: { type: "ArtifactFabricationMeasuredBasis", locator: `market:${admission.id}`, digest: semanticId(admission), derivation: "Read from acceptance.minimumSources of the admitted ResearchAssignmentAdmission." },
   };
   const clause = {
     id: "assignment-terms",
@@ -118,10 +118,10 @@ function fromAssignment(candidate, profile) {
     acceptance: [gating.id],
   };
   return {
-    inputs: { ...candidate.inputs, thesis: candidate.inputs?.thesis ?? validation.question },
-    budget: { maxPriceMicros: validation.maxPriceMicros, accountingUnit: "USD-micros" },
-    buyer: { id: validation.buyer },
-    market: { protocol: "curiosity-research-market", assignmentAdmission: validation.id, deliveryBy: validation.deliveryBy },
+    inputs: { ...candidate.inputs, thesis: candidate.inputs?.thesis ?? admission.question },
+    budget: { maxPriceMicros: admission.maxPriceMicros, accountingUnit: "USD-micros" },
+    buyer: { id: admission.buyer },
+    market: { protocol: "curiosity-research-market", assignmentAdmission: admission.id, deliveryBy: admission.deliveryBy },
     deliveryBy, clause, claim,
   };
 }
@@ -134,7 +134,7 @@ function fromAssignment(candidate, profile) {
  * @param {object} candidate a FabricationOrderCandidate
  * @param {{ profiles?: Map<string, object>, now?: string }} [options] `now` bounds a delivery date; the operation reads no clock
  */
-export function validateFabricationOrder(candidate, { profiles = kindProfiles(), now } = {}) {
+export function admitFabricationOrder(candidate, { profiles = kindProfiles(), now } = {}) {
   return refusing("FabricationOrderRefusal", () => {
     exactKeys(candidate, ORDER_KEYS, ["type", "version", "kind"], "candidate");
     if (candidate.type !== "FabricationOrderCandidate" || candidate.version !== 1) refuse("INVALID_ORDER", "candidate must be FabricationOrderCandidate@1", "candidate");

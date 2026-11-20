@@ -14,9 +14,9 @@
 import { tellingOf } from "@red-cup-engineering/signcraft/membrane";
 import { cones, documentOfSettlement, settleCells } from "@red-cup-engineering/signcraft/settle";
 import { semanticId } from "@red-cup-engineering/semiotic-content-address-system";
-import { projectionsOfCheck, readValidation } from "./admission.mjs";
-import { validateOutput } from "./address.mjs";
-import { CHECKS } from "./assays.mjs";
+import { projectionsOfAssay, readAdmission } from "./admission.mjs";
+import { admitOutput } from "./address.mjs";
+import { ASSAYS } from "./assays.mjs";
 import { kindProfiles } from "./kinds.mjs";
 import { deepFreeze, refuse, refusingAsync } from "./refusal.mjs";
 
@@ -26,7 +26,7 @@ const plain = (value) => JSON.parse(JSON.stringify(value));
 /** Let SignCraft settle and read one explicitly sided, witnessed assay proposition.
  * Each traced projection is read separately: equal artifact addresses do not
  * erase the projection multiplicity or order required by delivery receiving. */
-function checkCell(subject, predicate, object, witness, ok) {
+function assayCell(subject, predicate, object, witness, ok) {
   const telling = tellingOf({ utterance: [{ subject, object }, predicate], side: ok ? "for" : "against" }, witness);
   const settlement = settleCells([telling]);
   const { spine } = documentOfSettlement(settlement);
@@ -34,7 +34,7 @@ function checkCell(subject, predicate, object, witness, ok) {
 }
 
 /** Check a delivery candidate's frame against the admission and admit every output. */
-export function validateDelivery(delivery, specification, profile) {
+export function admitDelivery(delivery, specification, profile) {
   if (!isRecord(delivery) || delivery.type !== "FabricationDeliveryCandidate" || delivery.version !== 1) refuse("INVALID_DELIVERY", "delivery must be FabricationDeliveryCandidate@1", "delivery");
   if (delivery.artifactId !== specification.artifact.id || delivery.specificationDigest !== specification.specificationDigest) refuse("DELIVERY_BINDING_MISMATCH", "the delivery must bind the admitted artifact id and specification digest", "delivery");
   if (!isRecord(delivery.producer) || typeof delivery.producer.id !== "string" || delivery.producer.id === "") refuse("INVALID_DELIVERY", "delivery.producer must name its producer (id, revision)", "delivery.producer");
@@ -42,7 +42,7 @@ export function validateDelivery(delivery, specification, profile) {
   if (delivery.evidence !== undefined && !isRecord(delivery.evidence)) refuse("INVALID_DELIVERY", "delivery.evidence must be a JSON object", "delivery.evidence");
   const outputs = new Map();
   delivery.outputs.forEach((raw, index) => {
-    const output = validateOutput(raw, `delivery.outputs[${index}]`);
+    const output = admitOutput(raw, `delivery.outputs[${index}]`);
     if (outputs.has(output.projection)) refuse("DUPLICATE_PROJECTION", `the delivery repeats ${output.projection}`, `delivery.outputs[${index}]`);
     outputs.set(output.projection, output);
   });
@@ -63,31 +63,31 @@ export function validateDelivery(delivery, specification, profile) {
  * Refusals: INVALID_ADMISSION, ORDER_DOCUMENT_MISMATCH, INVALID_SPECIFICATION, UNKNOWN_KIND, INVALID_DELIVERY,
  * DELIVERY_BINDING_MISMATCH, DUPLICATE_PROJECTION, MISSING_PROJECTION, UNEXPECTED_PROJECTION, MEDIA_TYPE_MISMATCH, UNKNOWN_ASSAY.
  */
-export async function checkFabricatedArtifact(request, { profiles = kindProfiles(), ports = {} } = {}) {
+export async function assayFabricatedArtifact(request, { profiles = kindProfiles(), ports = {} } = {}) {
   return refusingAsync("FabricationAssayRefusal", async () => {
     if (!isRecord(request)) refuse("INVALID_REQUEST", "request must carry admission and delivery", "request");
-    const { order, specification, profile } = readValidation(request.admission, profiles);
-    const outputs = validateDelivery(request.delivery, specification, profile);
+    const { order, specification, profile } = readAdmission(request.admission, profiles);
+    const outputs = admitDelivery(request.delivery, specification, profile);
     const evidence = request.delivery.evidence ?? {};
-    const results = []; const cells = [];
+    const verdicts = []; const cells = [];
     for (const { id } of profile.assays) {
-      const check = CHECKS[id];
+      const check = ASSAYS[id];
       if (check === undefined) refuse("UNKNOWN_ASSAY", `the ${profile.kind} profile names the assay ${id}, which the section has no check for`, "profile.assays");
       let result;
       try { result = await check({ order, specification, profile, outputs, evidence, ports }); }
       catch (error) { result = { ok: false, reasons: [`the assay raised ${error?.name ?? "Error"}: ${String(error?.message ?? error).slice(0, 300)}`], facts: {} }; }
       const witness = plain({ assay: id, ok: result.ok, reasons: result.reasons, facts: result.facts });
-      const projections = projectionsOfCheck(specification, id);
-      const issued = projections.map((projection) => checkCell(outputs.get(projection).ni, id, specification.specificationDigest, witness, result.ok));
+      const projections = projectionsOfAssay(specification, id);
+      const issued = projections.map((projection) => assayCell(outputs.get(projection).ni, id, specification.specificationDigest, witness, result.ok));
       cells.push(...issued.map((item) => item.cell));
-      results.push({ assay: id, ok: result.ok, reasons: result.reasons, projections, cells: issued.map((item) => item.address), reading: issued.length === 0 ? null : issued[0].reading });
+      verdicts.push({ assay: id, ok: result.ok, reasons: result.reasons, projections, cells: issued.map((item) => item.address), reading: issued.length === 0 ? null : issued[0].reading });
     }
     const summary = [...outputs.values()].map(({ projection, mediaType, ni, size }) => ({ projection, mediaType, ni, size })).sort((a, b) => a.projection.localeCompare(b.projection));
     const body = {
       type: "FabricationAssayResult", version: 1, artifactId: specification.artifact.id, kind: profile.kind,
-      specificationDigest: specification.specificationDigest, outputs: summary, verdicts: results, cells: plain(cells),
-      passed: results.every(({ ok }) => ok),
+      specificationDigest: specification.specificationDigest, outputs: summary, verdicts, cells: plain(cells),
+      passed: verdicts.every(({ ok }) => ok),
     };
-    return deepFreeze({ ...body, assayDigest: semanticId({ artifactId: body.artifactId, specificationDigest: body.specificationDigest, outputs: summary, verdicts: plain(results) }) });
+    return deepFreeze({ ...body, assayDigest: semanticId({ artifactId: body.artifactId, specificationDigest: body.specificationDigest, outputs: summary, verdicts: plain(verdicts) }) });
   });
 }

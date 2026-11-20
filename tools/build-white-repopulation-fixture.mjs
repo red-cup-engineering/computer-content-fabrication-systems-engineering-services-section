@@ -16,9 +16,9 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { loadSpec } from "@red-cup-engineering/research-claim-reproduction-service";
-import { validateFabricationOrder } from "../src/order.mjs";
+import { admitFabricationOrder } from "../src/order.mjs";
 import { planFabrication } from "../src/plan.mjs";
-import { checkFabricatedArtifact } from "../src/assay.mjs";
+import { assayFabricatedArtifact } from "../src/assay.mjs";
 import { receiveFabricationDelivery } from "../src/delivery.mjs";
 
 const { values } = parseArgs({ options: { release: { type: "string" }, tree: { type: "string" }, conformance: { type: "string" }, out: { type: "string" } } });
@@ -86,36 +86,36 @@ const candidate = {
   budget: { amount: "$100.00" },
   placedAt: "2026-10-24T00:00:00Z",
 };
-const validation = validateFabricationOrder(candidate);
-if (validation.type !== "FabricationOrderAdmission") throw new Error(`order refused: ${JSON.stringify(validation)}`);
-const plan = planFabrication(validation.specification);
+const admission = admitFabricationOrder(candidate);
+if (admission.type !== "FabricationOrderAdmission") throw new Error(`order refused: ${JSON.stringify(admission)}`);
+const plan = planFabrication(admission.specification);
 if (plan.type !== "FabricationPlan") throw new Error(`plan refused: ${JSON.stringify(plan)}`);
 const delivery = {
-  type: "FabricationDeliveryCandidate", version: 1, artifactId: validation.artifactId, specificationDigest: validation.specification.specificationDigest,
+  type: "FabricationDeliveryCandidate", version: 1, artifactId: admission.artifactId, specificationDigest: admission.specification.specificationDigest,
   producer: { id: "lenticule-science-release-v0.2.0", revision: "white-repopulation@v0.2.0", kind: "organization" },
   startedAt: "2026-10-24T23:40:34.019Z", endedAt: "2026-10-24T23:41:05.246Z",
   outputs, evidence,
 };
-const check = await checkFabricatedArtifact({ admission: validation, delivery });
-if (check.type !== "FabricationAssayResult") throw new Error(`assay refused: ${JSON.stringify(check)}`);
-for (const result of check.verdicts) process.stdout.write(`${result.ok ? "held  " : "DENIED"} ${result.assay}${result.ok ? "" : `: ${result.reasons.join("; ")}`}\n`);
-const record = await receiveFabricationDelivery({ admission: validation, delivery, assay: check, receivedAt: "2026-10-24T23:58:19Z" });
-if (record.type !== "FabricationDeliveryReceipt") throw new Error(`receipt refused: ${record.code}: ${record.message}`);
+const assay = await assayFabricatedArtifact({ admission, delivery });
+if (assay.type !== "FabricationAssayResult") throw new Error(`assay refused: ${JSON.stringify(assay)}`);
+for (const verdict of assay.verdicts) process.stdout.write(`${verdict.ok ? "held  " : "DENIED"} ${verdict.assay}${verdict.ok ? "" : `: ${verdict.reasons.join("; ")}`}\n`);
+const receipt = await receiveFabricationDelivery({ admission, delivery, assay, receivedAt: "2026-10-24T23:58:19Z" });
+if (receipt.type !== "FabricationDeliveryReceipt") throw new Error(`receipt refused: ${receipt.code}: ${receipt.message}`);
 
 const manifest = {
-  type: "FabricationDeliveryManifest", version: 1, artifactId: validation.artifactId, specificationDigest: validation.specification.specificationDigest,
+  type: "FabricationDeliveryManifest", version: 1, artifactId: admission.artifactId, specificationDigest: admission.specification.specificationDigest,
   producer: delivery.producer, release: "https://github.com/lenticule-science/white-repopulation/releases/tag/v0.2.0",
-  outputs: outputsSpec.map(([projection, mediaType, name]) => ({ projection, mediaType, locator: `${RELEASE_URL}/${name}`, sha256: sha256(asset(name)), ...check.outputs.find((o) => o.projection === projection) })).concat([{ projection: "claims", mediaType: "application/json", locator: `${RELEASE_URL}/white-repopulation-data.tar.gz#data/derived/claims.json`, sha256: sha256(claimsBytes), ...check.outputs.find((o) => o.projection === "claims") }]),
+  outputs: outputsSpec.map(([projection, mediaType, name]) => ({ projection, mediaType, locator: `${RELEASE_URL}/${name}`, sha256: sha256(asset(name)), ...assay.outputs.find((o) => o.projection === projection) })).concat([{ projection: "claims", mediaType: "application/json", locator: `${RELEASE_URL}/white-repopulation-data.tar.gz#data/derived/claims.json`, sha256: sha256(claimsBytes), ...assay.outputs.find((o) => o.projection === "claims") }]),
 };
 mkdirSync(values.out, { recursive: true });
 const put = (name, value) => writeFileSync(join(values.out, name), typeof value === "string" || Buffer.isBuffer(value) ? value : `${JSON.stringify(value, null, 2)}\n`);
 put("order.json", candidate);
-put("admission.json", validation);
+put("admission.json", admission);
 put("plan.json", plan);
 put("delivery-manifest.json", manifest);
 put("evidence.json", evidence);
 put("claims.json", claimsBytes);
 put("prov.jsonld", asset("prov.jsonld"));
-put("assay.json", check);
-put("receipt.json", record);
-process.stdout.write(`fixture written to ${values.out}\nartifact ${validation.artifactId}\nreceipt ${record.receiptDigest}\n`);
+put("assay.json", assay);
+put("receipt.json", receipt);
+process.stdout.write(`fixture written to ${values.out}\nartifact ${admission.artifactId}\nreceipt ${receipt.receiptDigest}\n`);

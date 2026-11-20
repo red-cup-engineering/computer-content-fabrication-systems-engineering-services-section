@@ -3,7 +3,7 @@
  * record `{ type: "<Operation>Refusal", version: 1, code, message, path }` beside its success record.
  * `refuse` throws inside an operation body and `refusing` turns that throw into the record.
  */
-export class FabricationRejection extends Error {
+export class FabricationRefusal extends Error {
   constructor(code, message, path = null, detail = undefined) {
     super(message);
     this.code = code;
@@ -13,7 +13,7 @@ export class FabricationRejection extends Error {
 }
 
 export function refuse(code, message, path = null, detail = undefined) {
-  throw new FabricationRejection(code, message, path, detail);
+  throw new FabricationRefusal(code, message, path, detail);
 }
 
 export function deepFreeze(value) {
@@ -29,7 +29,7 @@ export function refusing(type, body) {
   try {
     return body();
   } catch (error) {
-    if (error instanceof FabricationRejection) return rejectionRecord(type, error);
+    if (error instanceof FabricationRefusal) return refusalRecord(type, error);
     throw error;
   }
 }
@@ -38,12 +38,12 @@ export async function refusingAsync(type, body) {
   try {
     return await body();
   } catch (error) {
-    if (error instanceof FabricationRejection) return rejectionRecord(type, error);
+    if (error instanceof FabricationRefusal) return refusalRecord(type, error);
     throw error;
   }
 }
 
-export function rejectionRecord(type, error) {
+export function refusalRecord(type, error) {
   return deepFreeze({
     type, version: 1, code: error.code, message: error.message, path: error.path ?? null,
     ...(error.detail === undefined ? {} : { detail: error.detail }),
@@ -51,4 +51,4 @@ export function rejectionRecord(type, error) {
 }
 
 /** Whether a result is one of the refusal records. */
-export const isRejection = (value) => value !== null && typeof value === "object" && typeof value.type === "string" && value.type.endsWith("Refusal");
+export const isRefusal = (value) => value !== null && typeof value === "object" && typeof value.type === "string" && value.type.endsWith("Refusal");

@@ -26,8 +26,8 @@ export function profileProblems(profile) {
   const produced = new Set(profile.steps.flatMap(({ produces }) => produces));
   const projections = new Set(profile.deliverables.map(({ projection }) => projection));
   for (const projection of projections) if (!produced.has(projection)) problems.push(`no step produces deliverable ${projection}`);
-  const checks = new Set(profile.assays.map(({ id }) => id));
-  if (checks.size !== profile.assays.length) problems.push("assay ids repeat");
+  const assays = new Set(profile.assays.map(({ id }) => id));
+  if (assays.size !== profile.assays.length) problems.push("assay ids repeat");
   if (projections.size !== profile.deliverables.length) problems.push("deliverable projections repeat");
   const constraints = new Set(profile.constraints.map(({ id }) => id));
   if (!profile.constraints.some(({ kind }) => kind === "law") || !profile.constraints.some(({ kind }) => kind === "standard")) problems.push("constraints need at least one law and one standard");
@@ -36,10 +36,10 @@ export function profileProblems(profile) {
   for (const clause of clauses) {
     for (const id of clause.constraints) if (!constraints.has(id)) problems.push(`clause ${clause.id} names unknown constraint ${id}`);
     for (const id of clause.projections) { if (!projections.has(id)) problems.push(`clause ${clause.id} names unknown projection ${id}`); covered.projections.add(id); }
-    for (const id of clause.acceptance) { if (!checks.has(id)) problems.push(`clause ${clause.id} names unknown assay ${id}`); covered.assays.add(id); }
+    for (const id of clause.acceptance) { if (!assays.has(id)) problems.push(`clause ${clause.id} names unknown assay ${id}`); covered.assays.add(id); }
   }
   for (const id of projections) if (!covered.projections.has(id)) problems.push(`deliverable ${id} is traced by no clause`);
-  for (const id of checks) if (!covered.assays.has(id)) problems.push(`assay ${id} is traced by no clause`);
+  for (const id of assays) if (!covered.assays.has(id)) problems.push(`assay ${id} is traced by no clause`);
   // The data layer refuses a bare number in a requirement, prohibition or acceptance statement; find it at load.
   for (const item of [...profile.requirements, ...profile.prohibitions, ...profile.assays]) {
     const literal = firstBareNumber(item.statement);
@@ -71,8 +71,8 @@ export function loadProfiles(directory = KINDS_DIRECTORY) {
   const profiles = new Map();
   for (const name of readdirSync(directory).filter((entry) => entry.endsWith(".json")).sort()) {
     const profile = JSON.parse(readFileSync(new URL(name, directory), "utf8"));
-    const result = validateJsonSchema(profile, PROFILE_SCHEMA);
-    if (!result.valid) throw new TypeError(`${name}: ${result.issues.slice(0, 3).map((issue) => `${issue.path || "/"} ${issue.message}`).join("; ")}`);
+    const verdict = validateJsonSchema(profile, PROFILE_SCHEMA);
+    if (!verdict.valid) throw new TypeError(`${name}: ${verdict.issues.slice(0, 3).map((issue) => `${issue.path || "/"} ${issue.message}`).join("; ")}`);
     if (`${profile.kind}.json` !== name) throw new TypeError(`${name}: kind ${profile.kind} must name its file`);
     const problems = profileProblems(profile);
     if (problems.length > 0) throw new TypeError(`${name}: ${problems.join("; ")}`);
