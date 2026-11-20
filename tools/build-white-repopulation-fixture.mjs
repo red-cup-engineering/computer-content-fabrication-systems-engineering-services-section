@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { sha256Hex } from "@red-cup-engineering/semiotic-content-address-system";
 // Builds the reference fixture: the White Repopulation v0.2.0 paper as a fully worked research-paper
 // order -> specification -> plan -> assay -> receipt, from its public release assets.
 //
@@ -27,13 +28,13 @@ for (const key of ["release", "tree", "conformance", "out"]) if (values[key] ===
 const RELEASE_URL = "https://github.com/lenticule-science/white-repopulation/releases/download/v0.2.0";
 const asset = (name) => readFileSync(join(values.release, name));
 const treeText = (path) => readFileSync(join(values.tree, path), "utf8");
-const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
+
 const base64 = (bytes) => Buffer.from(bytes).toString("base64");
 
 // The release's own checksums must hold for every asset we address.
 const sums = new Map(treeLines(asset("SHA256SUMS").toString("utf8")).map((line) => { const [hash, name] = line.split(/\s+/u); return [name, hash]; }));
 function treeLines(text) { return text.split("\n").filter(Boolean); }
-for (const [name, hash] of sums) if (sha256(asset(name)) !== hash) throw new Error(`release asset ${name} does not match SHA256SUMS`);
+for (const [name, hash] of sums) if (sha256Hex(asset(name)) !== hash) throw new Error(`release asset ${name} does not match SHA256SUMS`);
 
 // Claims: the claim-spec and records as the paper's repository states them; the delivered claims record
 // is the tarball's data/derived/claims.json.
@@ -79,7 +80,7 @@ const candidate = {
     subtitle: "The future white, captive births, and the transatlantic reproduction of settler rule",
     thesis: "Institutions preserved the authority to classify and to appropriate reproduction more reliably than the reproductive opportunities of every person classified white.",
     authors: [{ name: "Morgan Sennhauser", role: "accountable-human-author" }],
-    sourceBundle: { locator: `${RELEASE_URL}/white-repopulation-data.tar.gz`, digest: `sha256:${sha256(asset("white-repopulation-data.tar.gz"))}` },
+    sourceBundle: { locator: `${RELEASE_URL}/white-repopulation-data.tar.gz`, digest: `sha256:${sha256Hex(asset("white-repopulation-data.tar.gz"))}` },
     license: "CC-BY-4.0", language: "en-US",
     keywords: ["settler colonialism", "social reproduction", "historical demography"],
   },
@@ -105,7 +106,7 @@ if (receipt.type !== "FabricationDeliveryReceipt") throw new Error(`receipt refu
 const manifest = {
   type: "FabricationDeliveryManifest", version: 1, artifactId: admission.artifactId, specificationDigest: admission.specification.specificationDigest,
   producer: delivery.producer, release: "https://github.com/lenticule-science/white-repopulation/releases/tag/v0.2.0",
-  outputs: outputsSpec.map(([projection, mediaType, name]) => ({ projection, mediaType, locator: `${RELEASE_URL}/${name}`, sha256: sha256(asset(name)), ...assay.outputs.find((o) => o.projection === projection) })).concat([{ projection: "claims", mediaType: "application/json", locator: `${RELEASE_URL}/white-repopulation-data.tar.gz#data/derived/claims.json`, sha256: sha256(claimsBytes), ...assay.outputs.find((o) => o.projection === "claims") }]),
+  outputs: outputsSpec.map(([projection, mediaType, name]) => ({ projection, mediaType, locator: `${RELEASE_URL}/${name}`, sha256: sha256Hex(asset(name)), ...assay.outputs.find((o) => o.projection === projection) })).concat([{ projection: "claims", mediaType: "application/json", locator: `${RELEASE_URL}/white-repopulation-data.tar.gz#data/derived/claims.json`, sha256: sha256Hex(claimsBytes), ...assay.outputs.find((o) => o.projection === "claims") }]),
 };
 mkdirSync(values.out, { recursive: true });
 const put = (name, value) => writeFileSync(join(values.out, name), typeof value === "string" || Buffer.isBuffer(value) ? value : `${JSON.stringify(value, null, 2)}\n`);

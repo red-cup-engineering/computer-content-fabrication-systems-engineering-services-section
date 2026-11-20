@@ -1,3 +1,4 @@
+import { sha256Hex } from "@red-cup-engineering/semiotic-content-address-system";
 import { isRecord } from "@red-cup-engineering/signcell/values";
 /**
  * Reading back an admission record the caller hands to a later operation. The records are plain
@@ -8,7 +9,7 @@ import { isRecord } from "@red-cup-engineering/signcell/values";
 import { semanticId } from "@red-cup-engineering/semiotic-content-address-system";
 import { kindProfiles } from "./kinds.mjs";
 import { refuse } from "./refusal.mjs";
-import { orderDocument, sha256Hex } from "./specify.mjs";
+import { orderDocument } from "./specify.mjs";
 
 
 

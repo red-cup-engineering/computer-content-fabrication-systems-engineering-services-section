@@ -1,3 +1,4 @@
+import { sha256Hex } from "@red-cup-engineering/semiotic-content-address-system";
 /**
  * From a kind profile and an order to the data layer's ArtifactFabricationSpecificationCandidate.
  * The record type is the data layer's (`computer-data-engineering-services-section/artifact-fabrication`);
@@ -15,7 +16,7 @@ const sortKeys = (value) => {
 /** The order as its source document: sorted keys, two-space indent, one trailing newline. Equal orders give equal bytes. */
 export const orderDocument = (order) => `${JSON.stringify(sortKeys(order), null, 2)}\n`;
 
-export const sha256Hex = (bytes) => createHash("sha256").update(bytes).digest("hex");
+
 
 const lineCount = (text) => text.split(/\r\n|\n|\r/u).length;
 

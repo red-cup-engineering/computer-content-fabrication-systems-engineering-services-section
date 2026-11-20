@@ -1,3 +1,4 @@
+import { sha256Hex } from "@red-cup-engineering/semiotic-content-address-system";
 import { isRecord } from "@red-cup-engineering/signcell/values";
 /**
  * The assays: one acceptance check per assay id a kind profile names. An assay reads the delivered
@@ -26,7 +27,7 @@ import { validateVegaLiteSpec } from "@red-cup-engineering/chart-specification-r
 import { renderMarkdown, renderPasteHtml, validateIssue } from "@red-cup-engineering/email-newsletter-engineering-services-section";
 import { validateSerialManifest } from "@red-cup-engineering/email-newsletter-engineering-services-section/fiction-serial";
 import { niOfBytes, niOfJson, jsonOf, textOf } from "./address.mjs";
-import { sha256Hex } from "./specify.mjs";
+
 
 
 const verdict = (reasons, facts = {}) => ({ ok: reasons.length === 0, reasons, facts });
