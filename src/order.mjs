@@ -1,3 +1,4 @@
+import { isRecord } from "@red-cup-engineering/signcell/values";
 /**
  * Orders and quotes. A buyer's order becomes an admitted ArtifactFabricationSpecification (the data
  * layer's record, not a parallel one); a quote is the profile's price and turnaround.
@@ -17,7 +18,7 @@ import { centsOf, centsOfMicros } from "./money.mjs";
 import { deepFreeze, refuse, refusing } from "./refusal.mjs";
 import { orderDocument, sourceBindingProblems, specificationCandidate } from "./specify.mjs";
 
-const isRecord = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+
 const singleLine = (value) => typeof value === "string" && value.trim() !== "" && !/[\r\n]/u.test(value);
 const ORDER_KEYS = ["type", "version", "kind", "buyer", "inputs", "budget", "placedAt", "assignmentAdmission"];
 const ASSIGNMENT_KINDS = new Set(["research-paper", "research-paper-text", "corpus-research-paper"]);

@@ -1,3 +1,4 @@
+import { isRecord } from "@red-cup-engineering/signcell/values";
 /**
  * `assayFabricatedArtifact`: the per-kind acceptance of a delivery. Each output is addressed (bytes by
  * `addressContent`, JSON by `semanticId`); each assay the kind's profile names runs; and each verdict
@@ -20,7 +21,7 @@ import { ASSAYS } from "./assays.mjs";
 import { kindProfiles } from "./kinds.mjs";
 import { deepFreeze, refuse, refusingAsync } from "./refusal.mjs";
 
-const isRecord = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+
 const plain = (value) => JSON.parse(JSON.stringify(value));
 
 /** Let SignCraft settle and read one explicitly sided, witnessed assay proposition.

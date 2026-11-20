@@ -1,3 +1,4 @@
+import { isRecord } from "@red-cup-engineering/signcell/values";
 /**
  * Delivered outputs and their addresses. Every delivered artifact is named by its RFC 6920 ni name:
  * bytes by `addressContent`, JSON by `semanticId` (the semantic identity of the value, not of any one
@@ -7,7 +8,7 @@ import { addressContent } from "@red-cup-engineering/computer-content-address-en
 import { semanticId } from "@red-cup-engineering/semiotic-content-address-system";
 import { refuse } from "./refusal.mjs";
 
-const isRecord = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+
 const BASE64 = /^[A-Za-z0-9+/]*={0,2}$/u;
 
 export const niOfBytes = (bytes, mediaType) => addressContent(bytes, { mediaType });

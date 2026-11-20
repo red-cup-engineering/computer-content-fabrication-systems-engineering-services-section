@@ -1,3 +1,4 @@
+import { isRecord } from "@red-cup-engineering/signcell/values";
 /**
  * `receiveFabricationDelivery`: the receiving act, after the assay. It refuses a delivery any of whose
  * assays failed; otherwise it admits the data layer's ArtifactFabricationRealizationReceipt (every
@@ -18,7 +19,7 @@ import { niOfBytes } from "./address.mjs";
 import { kindProfiles } from "./kinds.mjs";
 import { deepFreeze, refuse, refusingAsync } from "./refusal.mjs";
 
-const isRecord = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+
 const plain = (value) => JSON.parse(JSON.stringify(value));
 const utf8 = (text) => new TextEncoder().encode(text);
 

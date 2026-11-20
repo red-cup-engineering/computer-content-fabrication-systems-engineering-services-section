@@ -1,3 +1,4 @@
+import { isRecord } from "@red-cup-engineering/signcell/values";
 /**
  * `planFabrication`: an admitted ArtifactFabricationSpecification to its realization plan. The data
  * layer's ArtifactFabricationRealizationPlan (exhaustive coverage of the specification's projections
@@ -9,7 +10,7 @@ import { semanticId } from "@red-cup-engineering/semiotic-content-address-system
 import { kindProfiles } from "./kinds.mjs";
 import { deepFreeze, refuse, refusing } from "./refusal.mjs";
 
-const isRecord = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+
 
 /** Stable topological order: a step follows every step it depends on; ties keep the profile's order. */
 export function orderSteps(steps) {

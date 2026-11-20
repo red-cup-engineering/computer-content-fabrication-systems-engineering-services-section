@@ -1,3 +1,4 @@
+import { isRecord } from "@red-cup-engineering/signcell/values";
 /**
  * The assays: one acceptance check per assay id a kind profile names. An assay reads the delivered
  * outputs and the evidence the delivery carries and answers `{ ok, reasons, facts }`; it never writes,
@@ -27,7 +28,7 @@ import { validateSerialManifest } from "@red-cup-engineering/email-newsletter-en
 import { niOfBytes, niOfJson, jsonOf, textOf } from "./address.mjs";
 import { sha256Hex } from "./specify.mjs";
 
-const isRecord = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+
 const verdict = (reasons, facts = {}) => ({ ok: reasons.length === 0, reasons, facts });
 const fail = (...reasons) => verdict(reasons);
 const DOCUMENT_PROJECTIONS = ["pdf", "html", "docx", "jats", "markdown"];

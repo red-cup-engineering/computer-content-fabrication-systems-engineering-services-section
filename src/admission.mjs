@@ -1,3 +1,4 @@
+import { isRecord } from "@red-cup-engineering/signcell/values";
 /**
  * Reading back an admission record the caller hands to a later operation. The records are plain
  * JSON, so a caller could alter one; each operation therefore re-checks what it relies on: the order
@@ -9,7 +10,7 @@ import { kindProfiles } from "./kinds.mjs";
 import { refuse } from "./refusal.mjs";
 import { orderDocument, sha256Hex } from "./specify.mjs";
 
-const isRecord = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+
 
 export function readAdmission(admission, profiles = kindProfiles()) {
   if (!isRecord(admission) || admission.type !== "FabricationOrderAdmission" || admission.version !== 1 || !isRecord(admission.order) || !isRecord(admission.specification) || typeof admission.orderDocument !== "string") {

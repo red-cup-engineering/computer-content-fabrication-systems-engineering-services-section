@@ -1,3 +1,4 @@
+import { isRecord } from "@red-cup-engineering/signcell/values";
 /**
  * Execution is not this section's. It is the agent-harness carrier's
  * (`agent-harness-computer-system-engineering-services-section/carrier/agency-carrier`: `agencyWorkCarrier`
@@ -26,7 +27,7 @@ import { admitFabricationOrder } from "./order.mjs";
 import { planFabrication } from "./plan.mjs";
 import { deepFreeze, refuse, refusingAsync, isRefusal } from "./refusal.mjs";
 
-const isRecord = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+
 const reasonOf = (error) => (error instanceof Error ? error.message : String(error));
 
 /** The work order for one admitted order and its plan: what the executor is asked to produce, and nothing it need not know. */
