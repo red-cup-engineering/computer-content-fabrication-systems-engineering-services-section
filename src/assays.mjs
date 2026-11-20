@@ -15,9 +15,9 @@
  *   svg-byte-deterministic  data?: rows or a file map the chart specification reads
  *   edition-accepted        proof: the ebook section's EbookEditionProof
  */
-import { checkOriginClosure } from "@red-cup-engineering/prov-o-provenance-service/check-provenance-closure";
-import { composeOriginManifest } from "@red-cup-engineering/prov-o-provenance-service/compose-provenance-manifest";
-import { projectOriginAsProvO } from "@red-cup-engineering/prov-o-provenance-service/project-provenance-as-prov-o";
+import { checkProvenanceClosure } from "@red-cup-engineering/prov-o-provenance-service/check-provenance-closure";
+import { composeProvenanceManifest } from "@red-cup-engineering/prov-o-provenance-service/compose-provenance-manifest";
+import { projectProvenanceAsProvO } from "@red-cup-engineering/prov-o-provenance-service/project-provenance-as-prov-o";
 import { reproduceStatedClaims } from "@red-cup-engineering/research-claim-reproduction-service/reproduce-stated-claims";
 import { checkReleaseMetadataConsistency } from "@red-cup-engineering/research-release-metadata-service/check-release-metadata-consistency";
 import { renderVegaLiteSpecAsSvg } from "@red-cup-engineering/chart-specification-rendering-service/render-vega-lite-spec-as-svg";
@@ -82,14 +82,14 @@ async function renderRecordCloses({ evidence, outputs, specification }) {
   }
   const baseIri = evidence.baseIri ?? `https://561.group/knowledge/${specification.artifact.id}/build/`;
   const fragments = [receipt.provenance, ...(evidence.people === undefined ? [] : [evidence.people])];
-  const composed = composeOriginManifest({ fragments, baseIri });
+  const composed = composeProvenanceManifest({ fragments, baseIri });
   let projected;
   if (!composed.ok) reasons.push(`the provenance fragments do not compose: ${composed.refusal?.message ?? "refused"}`);
   else {
-    const closure = checkOriginClosure(composed.manifest);
+    const closure = checkProvenanceClosure(composed.manifest);
     if (!closure.ok || !closure.closed) reasons.push("the provenance of the render does not close");
     else if (outputs.has("provenance")) {
-      projected = await projectOriginAsProvO(composed.manifest);
+      projected = await projectProvenanceAsProvO(composed.manifest);
       if (!projected.ok) reasons.push(`the provenance does not project as PROV-O: ${projected.refusal?.message ?? "refused"}`);
       else {
         const delivered = jsonOf(outputs.get("provenance"));

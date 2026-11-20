@@ -9,7 +9,7 @@
  * identity check (its content id) is the market's act, made when it admitted the assignment; this
  * module reads the admitted record and keeps its id as the order's market reference.
  */
-import { validateArtifactFabricationSpecification } from "@red-cup-engineering/computer-data-engineering-services-section/artifact-fabrication";
+import { admitArtifactFabricationSpecification } from "@red-cup-engineering/computer-data-engineering-services-section/artifact-fabrication";
 import { validateJsonSchema } from "@red-cup-engineering/json-schema-engineering-services-section/validation";
 import { semanticId } from "@red-cup-engineering/semiotic-content-address-system";
 import { kindIds, kindProfiles, priceOf, turnaroundOf } from "./kinds.mjs";
@@ -165,7 +165,7 @@ export function validateFabricationOrder(candidate, { profiles = kindProfiles(),
     };
     const text = orderDocument(order);
     const bytes = new TextEncoder().encode(text);
-    const specification = validateArtifactFabricationSpecification(specificationCandidate(profile, order, text, extra));
+    const specification = admitArtifactFabricationSpecification(specificationCandidate(profile, order, text, extra));
     if (specification.type === "ArtifactFabricationSpecificationRefusal") refuse("SPECIFICATION_REFUSED", `the data layer refused the specification: ${specification.message}`, specification.path, specification);
     const unbound = sourceBindingProblems(specification, bytes);
     if (unbound.length > 0) refuse("SPECIFICATION_REFUSED", unbound.join("; "), "source");

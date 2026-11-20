@@ -6,11 +6,11 @@
  * It also states the market outcome (the demand -> work order -> assay -> delivery -> market-outcome
  * pattern of knowledge production): `accepted` here, `refused` from the orchestrator when this refuses.
  */
-import { validateArtifactFabricationRealizationRecord } from "@red-cup-engineering/computer-data-engineering-services-section/artifact-fabrication";
+import { admitArtifactFabricationRealizationReceipt } from "@red-cup-engineering/computer-data-engineering-services-section/artifact-fabrication";
 import { semanticId } from "@red-cup-engineering/semiotic-content-address-system";
-import { checkOriginClosure } from "@red-cup-engineering/prov-o-provenance-service/check-provenance-closure";
-import { composeOriginManifest } from "@red-cup-engineering/prov-o-provenance-service/compose-provenance-manifest";
-import { projectOriginAsProvO } from "@red-cup-engineering/prov-o-provenance-service/project-provenance-as-prov-o";
+import { checkProvenanceClosure } from "@red-cup-engineering/prov-o-provenance-service/check-provenance-closure";
+import { composeProvenanceManifest } from "@red-cup-engineering/prov-o-provenance-service/compose-provenance-manifest";
+import { projectProvenanceAsProvO } from "@red-cup-engineering/prov-o-provenance-service/project-provenance-as-prov-o";
 import { admitCell, address } from "@red-cup-engineering/signcell";
 import { readValidation } from "./admission.mjs";
 import { validateDelivery } from "./assay.mjs";
@@ -93,14 +93,14 @@ export async function receiveFabricationDelivery(request, { profiles = kindProfi
       realizations: specification.projections.map(({ id }) => ({ type: "ArtifactFabricationRealizationEvidence", version: 1, projectionId: id, evidence: { type: "ArtifactFabricationEvidence", locator: projectionOf(id).target, digest: outputs.get(id).ni } })),
       acceptances: specification.acceptanceObligations.map(({ id }) => ({ type: "ArtifactFabricationRealizationEvidence", version: 1, acceptanceObligationId: id, evidence: { type: "ArtifactFabricationEvidence", locator: `signcell:${id}`, digest: semanticId(plain(check.verdicts.find((item) => item.assay === id).cells)) } })),
     };
-    const record = validateArtifactFabricationRealizationRecord(specification, candidate);
+    const record = admitArtifactFabricationRealizationReceipt(specification, candidate);
     if (record.type === "ArtifactFabricationRealizationReceiptRefusal") refuse("RECEIPT_REFUSED", `the data layer refused the realization receipt: ${record.message}`, record.path, record);
     const fragment = originFragment({ admission: validation, order, profile, delivery, outputs, receivedAt });
-    const composed = composeOriginManifest({ fragments: [fragment], baseIri: `https://561.group/fabrication/${specification.artifact.id}/` });
+    const composed = composeProvenanceManifest({ fragments: [fragment], baseIri: `https://561.group/fabrication/${specification.artifact.id}/` });
     if (!composed.ok) refuse("PROVENANCE_REFUSED", `the fabrication provenance does not compose: ${composed.refusal.message}`, "provenance");
-    const closure = checkOriginClosure(composed.manifest);
+    const closure = checkProvenanceClosure(composed.manifest);
     if (!closure.ok || !closure.closed) refuse("PROVENANCE_REFUSED", "the fabrication provenance does not close", "provenance");
-    const projected = await projectOriginAsProvO(composed.manifest);
+    const projected = await projectProvenanceAsProvO(composed.manifest);
     if (!projected.ok) refuse("PROVENANCE_REFUSED", `the fabrication provenance does not project as PROV-O: ${projected.refusal.message}`, "provenance");
     const recordDigest = semanticId(plain(record));
     return deepFreeze({
