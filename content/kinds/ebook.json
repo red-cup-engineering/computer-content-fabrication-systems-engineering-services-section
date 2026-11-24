@@ -1,0 +1,200 @@
+{
+  "$schema": "../schema/kind-profile.schema.json",
+  "type": "FabricationKindProfile",
+  "version": 1,
+  "kind": "ebook",
+  "title": "Ebook edition",
+  "summary": "An EPUB and screen PDF edition fabricated and accepted by the ebook section's fabricate-then-accept pair; acceptance requires an independent proofer's record of the exact bytes.",
+  "delegate": {
+    "package": "@red-cup-engineering/ebook-engineering-services-section",
+    "fabricate": "fabricate-ebook-edition#fabricateEbookEdition",
+    "accept": "accept-ebook-edition#acceptEbookEdition"
+  },
+  "inputSchema": {
+    "type": "object",
+    "required": [
+      "title",
+      "manuscript"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "type": "string",
+        "minLength": 1
+      },
+      "author": {
+        "type": "string"
+      },
+      "manuscript": {
+        "type": "object",
+        "required": [
+          "locator",
+          "digest"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "locator": {
+            "type": "string"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^(sha256:[a-f0-9]{64}|ni:///sha-256;[A-Za-z0-9_-]{43})$"
+          }
+        }
+      },
+      "request": {
+        "type": "object",
+        "description": "The edition request the ebook section's specifyEbookEdition takes."
+      }
+    }
+  },
+  "producers": [
+    {
+      "id": "agent",
+      "package": "@red-cup-engineering/agent-harness-computer-system-engineering-services-section",
+      "operation": "carrier/agency-carrier",
+      "role": "Writes the manuscript when none is supplied, and an independent agent proofs the edition.",
+      "source": "agent-harness"
+    },
+    {
+      "id": "ebook",
+      "package": "@red-cup-engineering/ebook-engineering-services-section",
+      "operation": "fabricate-ebook-edition",
+      "role": "Fabricates the EPUB and screen PDF from the manuscript.",
+      "source": "registry"
+    }
+  ],
+  "steps": [
+    {
+      "id": "write-manuscript",
+      "producer": "agent",
+      "summary": "Write or accept the manuscript.",
+      "consumes": [
+        "order"
+      ],
+      "produces": [
+        "manuscript"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "fabricate-edition",
+      "producer": "ebook",
+      "summary": "Fabricate the edition (EPUB and screen PDF).",
+      "consumes": [
+        "manuscript"
+      ],
+      "produces": [
+        "epub",
+        "screen-pdf",
+        "edition"
+      ],
+      "dependsOn": [
+        "write-manuscript"
+      ]
+    }
+  ],
+  "deliverables": [
+    {
+      "projection": "epub",
+      "mediaType": "application/epub+zip",
+      "target": "edition.epub"
+    },
+    {
+      "projection": "screen-pdf",
+      "mediaType": "application/pdf",
+      "target": "edition.pdf"
+    },
+    {
+      "projection": "edition",
+      "mediaType": "application/json",
+      "target": "edition.json"
+    }
+  ],
+  "assays": [
+    {
+      "id": "edition-accepted",
+      "statement": "The ebook section accepts the edition on an independent proofer's record of its exact EPUB and PDF digests.",
+      "uses": [
+        "@red-cup-engineering/ebook-engineering-services-section"
+      ]
+    },
+    {
+      "id": "edition-bytes-addressed",
+      "statement": "The EPUB and PDF delivered are the bytes whose digests the fabrication record names.",
+      "uses": []
+    }
+  ],
+  "price": {
+    "currency": "USD",
+    "basis": "fixed",
+    "amount": "$60.00"
+  },
+  "turnaround": {
+    "seconds": 604800,
+    "label": "within 7 days of an activated order"
+  },
+  "constraints": [
+    {
+      "id": "content-address-identity",
+      "kind": "law",
+      "authority": "IETF RFC 6920",
+      "revision": "2013",
+      "locator": "https://www.rfc-editor.org/rfc/rfc6920",
+      "applicability": "Every delivered byte string.",
+      "statement": "A delivered artifact is named by the sha-256 ni name of its bytes; equal bytes have equal names, so acceptance is evidence about those bytes alone."
+    },
+    {
+      "id": "ebook-edition-acceptance",
+      "kind": "standard",
+      "authority": "561 Group ebook-engineering-services-section",
+      "revision": "0.3.4",
+      "locator": "@red-cup-engineering/ebook-engineering-services-section/accept-ebook-edition",
+      "applicability": "The edition.",
+      "statement": "Only a stated acceptance, by a proofer who is not the writer and who names the exact digests read, turns a fabricated edition into one that may be sold."
+    },
+    {
+      "id": "signcell-acceptance",
+      "kind": "standard",
+      "authority": "561 Group SignCell",
+      "revision": "0.12",
+      "locator": "@red-cup-engineering/signcell/cell",
+      "applicability": "Acceptance.",
+      "statement": "Acceptance is a SignCell cell per assay: subject the artifact ni, predicate the assay id, witnesses the assay evidence."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "edition-delivered",
+      "statement": "Deliver the edition of the book the order names as an EPUB and a screen PDF with its fabrication record.",
+      "constraints": [
+        "ebook-edition-acceptance",
+        "content-address-identity"
+      ],
+      "projections": [
+        "epub",
+        "screen-pdf",
+        "edition"
+      ],
+      "acceptance": [
+        "edition-accepted",
+        "edition-bytes-addressed"
+      ]
+    }
+  ],
+  "prohibitions": [
+    {
+      "id": "no-self-proofing",
+      "statement": "The edition's writer may not be its proofer.",
+      "constraints": [
+        "ebook-edition-acceptance"
+      ],
+      "projections": [
+        "edition"
+      ],
+      "acceptance": [
+        "edition-accepted"
+      ]
+    }
+  ]
+}

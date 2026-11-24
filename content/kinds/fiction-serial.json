@@ -1,0 +1,199 @@
+{
+  "$schema": "../schema/kind-profile.schema.json",
+  "type": "FabricationKindProfile",
+  "version": 1,
+  "kind": "fiction-serial",
+  "title": "Fiction serial episode",
+  "summary": "One episode of a fiction serial as the fiction issue record with Markdown and HTML renderings, under a validated serial manifest.",
+  "delegate": {
+    "package": "@red-cup-engineering/email-newsletter-engineering-services-section",
+    "fabricate": "fiction-serial#fictionIssueFromEpisode",
+    "accept": "fiction-serial#validateSerialManifest"
+  },
+  "inputSchema": {
+    "type": "object",
+    "required": [
+      "manifest",
+      "storyBible",
+      "brief"
+    ],
+    "additionalProperties": false,
+    "properties": {
+      "manifest": {
+        "type": "object",
+        "description": "The serial manifest (canon, serial, cadence, newsletter, language, script, free episodes)."
+      },
+      "storyBible": {
+        "type": "object",
+        "description": "The story bible with its outline."
+      },
+      "brief": {
+        "type": "string",
+        "minLength": 1
+      },
+      "episode": {
+        "type": "integer",
+        "minimum": 1
+      }
+    }
+  },
+  "producers": [
+    {
+      "id": "agent",
+      "package": "@red-cup-engineering/agent-harness-computer-system-engineering-services-section",
+      "operation": "carrier/agency-carrier",
+      "role": "Writes the episode to the story bible and the brief.",
+      "source": "agent-harness"
+    },
+    {
+      "id": "serial",
+      "package": "@red-cup-engineering/email-newsletter-engineering-services-section",
+      "operation": "fiction-serial: validateSerialManifest, fictionIssueFromEpisode",
+      "role": "Validates the manifest and projects the episode into the fiction issue.",
+      "source": "registry"
+    }
+  ],
+  "steps": [
+    {
+      "id": "write-episode",
+      "producer": "agent",
+      "summary": "Write the episode as lintable Markdown.",
+      "consumes": [
+        "order"
+      ],
+      "produces": [
+        "episode-text"
+      ],
+      "dependsOn": []
+    },
+    {
+      "id": "project-episode",
+      "producer": "serial",
+      "summary": "Project the episode into the fiction issue and render it.",
+      "consumes": [
+        "episode-text"
+      ],
+      "produces": [
+        "issue",
+        "markdown",
+        "html"
+      ],
+      "dependsOn": [
+        "write-episode"
+      ]
+    }
+  ],
+  "deliverables": [
+    {
+      "projection": "issue",
+      "mediaType": "application/json",
+      "target": "issue.json"
+    },
+    {
+      "projection": "markdown",
+      "mediaType": "text/markdown",
+      "target": "issue.md"
+    },
+    {
+      "projection": "html",
+      "mediaType": "text/html",
+      "target": "issue.html"
+    }
+  ],
+  "assays": [
+    {
+      "id": "serial-manifest-valid",
+      "statement": "The serial manifest validates.",
+      "uses": [
+        "@red-cup-engineering/email-newsletter-engineering-services-section"
+      ]
+    },
+    {
+      "id": "issue-valid",
+      "statement": "The fiction issue record validates: canon, serial, episode, recap and access.",
+      "uses": [
+        "@red-cup-engineering/email-newsletter-engineering-services-section"
+      ]
+    },
+    {
+      "id": "renderings-reproduce",
+      "statement": "Rendering the delivered issue record again yields exactly the delivered Markdown and HTML bytes.",
+      "uses": [
+        "@red-cup-engineering/email-newsletter-engineering-services-section"
+      ]
+    }
+  ],
+  "price": {
+    "currency": "USD",
+    "basis": "fixed",
+    "amount": "$40.00"
+  },
+  "turnaround": {
+    "seconds": 86400,
+    "label": "within 24 hours of an activated order"
+  },
+  "constraints": [
+    {
+      "id": "content-address-identity",
+      "kind": "law",
+      "authority": "IETF RFC 6920",
+      "revision": "2013",
+      "locator": "https://www.rfc-editor.org/rfc/rfc6920",
+      "applicability": "Every delivered byte string.",
+      "statement": "A delivered artifact is named by the sha-256 ni name of its bytes; equal bytes have equal names, so acceptance is evidence about those bytes alone."
+    },
+    {
+      "id": "newsletter-issue-shape",
+      "kind": "standard",
+      "authority": "561 Group email-newsletter-engineering-services-section",
+      "revision": "0.1.1",
+      "locator": "@red-cup-engineering/email-newsletter-engineering-services-section",
+      "applicability": "The issue record.",
+      "statement": "An issue is the platform-neutral record the newsletter section validates, and every rendering is its deterministic projection."
+    },
+    {
+      "id": "signcell-acceptance",
+      "kind": "standard",
+      "authority": "561 Group SignCell",
+      "revision": "0.12",
+      "locator": "@red-cup-engineering/signcell/cell",
+      "applicability": "Acceptance.",
+      "statement": "Acceptance is a SignCell cell per assay: subject the artifact ni, predicate the assay id, witnesses the assay evidence."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "episode-delivered",
+      "statement": "Deliver the episode for the brief the order states as a fiction issue record with Markdown and HTML renderings.",
+      "constraints": [
+        "newsletter-issue-shape",
+        "content-address-identity"
+      ],
+      "projections": [
+        "issue",
+        "markdown",
+        "html"
+      ],
+      "acceptance": [
+        "serial-manifest-valid",
+        "issue-valid",
+        "renderings-reproduce"
+      ]
+    }
+  ],
+  "prohibitions": [
+    {
+      "id": "no-recapless-continuation",
+      "statement": "An episode after the first may not omit its recap.",
+      "constraints": [
+        "newsletter-issue-shape"
+      ],
+      "projections": [
+        "issue"
+      ],
+      "acceptance": [
+        "issue-valid"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://561.group/schema/content-fabrication/kind-profile.schema.json",
+  "title": "FabricationKindProfile",
+  "description": "One sellable kind of fabricated artifact, stated as data: the input a buyer supplies, the upstream producer services the kind composes, the plan steps that order them, the deliverables (each one a projection of the admitted artifact fabrication specification), the acceptance assays (each one an acceptance obligation), the price and the turnaround. The operations read profiles; no operation names a kind in code except to bind that kind's assays.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "version", "kind", "title", "summary", "inputSchema", "producers", "steps", "deliverables", "assays", "price", "turnaround", "constraints", "requirements", "prohibitions"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "type": { "const": "FabricationKindProfile" },
+    "version": { "const": 1 },
+    "kind": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "title": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "delegate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["package", "fabricate", "accept"],
+      "description": "A kind whose fabricate-then-accept pair already lives upstream: the assay of this kind calls that pair, the section does not restate it.",
+      "properties": {
+        "package": { "type": "string" },
+        "fabricate": { "type": "string" },
+        "accept": { "type": "string" }
+      }
+    },
+    "inputSchema": { "type": "object", "description": "JSON Schema (an object schema) of the order's inputs." },
+    "producers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "package", "operation", "role"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "package": { "type": "string", "pattern": "^@?[a-z0-9][a-z0-9/_.-]*$" },
+          "operation": { "type": "string", "minLength": 1 },
+          "role": { "type": "string", "minLength": 1 },
+          "source": { "enum": ["registry", "github", "python", "agent-harness"] }
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "producer", "summary", "consumes", "produces", "dependsOn"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "producer": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "summary": { "type": "string", "minLength": 1 },
+          "consumes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "produces": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "dependsOn": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" } }
+        }
+      }
+    },
+    "deliverables": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["projection", "mediaType", "target"],
+        "properties": {
+          "projection": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "mediaType": { "type": "string", "pattern": "^[a-z]+/[A-Za-z0-9.+-]+$" },
+          "target": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "assays": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement", "uses"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "statement": { "type": "string", "minLength": 1 },
+          "uses": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "price": {
+      "oneOf": [
+        {
+          "type": "object", "additionalProperties": false, "required": ["currency", "basis", "amount"],
+          "properties": { "currency": { "const": "USD" }, "basis": { "const": "fixed" }, "amount": { "$ref": "#/$defs/dollars" } }
+        },
+        {
+          "type": "object", "additionalProperties": false, "required": ["currency", "basis", "tierField", "tiers"],
+          "properties": {
+            "currency": { "const": "USD" }, "basis": { "const": "tier" }, "tierField": { "type": "string" },
+            "tiers": { "type": "object", "minProperties": 1, "additionalProperties": { "$ref": "#/$defs/dollars" } }
+          }
+        }
+      ]
+    },
+    "turnaround": {
+      "type": "object", "additionalProperties": false, "required": ["seconds", "label"],
+      "properties": {
+        "seconds": { "type": "integer", "minimum": 1 },
+        "tiers": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 1 } },
+        "label": { "type": "string", "minLength": 1 }
+      }
+    },
+    "constraints": {
+      "type": "array", "minItems": 2,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "kind", "authority", "revision", "locator", "applicability", "statement"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "kind": { "enum": ["law", "standard", "operational"] },
+          "authority": { "type": "string" }, "revision": { "type": "string" }, "locator": { "type": "string" },
+          "applicability": { "type": "string" }, "statement": { "type": "string" }
+        }
+      }
+    },
+    "requirements": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/clause" } },
+    "prohibitions": { "type": "array", "items": { "$ref": "#/$defs/clause" } }
+  },
+  "$defs": {
+    "dollars": { "type": "string", "pattern": "^\\$[0-9]+\\.[0-9]{2}$" },
+    "clause": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "statement", "constraints", "projections", "acceptance"],
+      "description": "A requirement or prohibition, with the constraints it rests on, the projections that realize it and the assays that accept it: the traceability the data layer demands. `{field}` in the statement is replaced by the order's input of that name.",
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "statement": { "type": "string", "minLength": 1 },
+        "constraints": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "projections": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "acceptance": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    }
+  }
+}

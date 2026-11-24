@@ -1,0 +1,83 @@
+{
+  "name": "@red-cup-engineering/computer-content-fabrication-systems-engineering-services-section",
+  "version": "0.1.5-dev.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "The commerce-and-acceptance layer of on-demand content fabrication: kind profiles, order admission, quotes, realization plans, per-kind assays that issue SignCell acceptance cells, and realization receipts. Execution is delegated through a port to the agent harness; production is composed from upstream house services.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/red-cup-engineering/computer-content-fabrication-systems-engineering-services-section.git"
+  },
+  "exports": {
+    ".": "./index.mjs",
+    "./package.json": "./package.json",
+    "./admit-fabrication-order": "./scripts/admit-fabrication-order.mjs",
+    "./quote-fabrication-order": "./scripts/quote-fabrication-order.mjs",
+    "./plan-fabrication": "./scripts/plan-fabrication.mjs",
+    "./assay-fabricated-artifact": "./scripts/assay-fabricated-artifact.mjs",
+    "./receive-fabrication-delivery": "./scripts/receive-fabrication-delivery.mjs",
+    "./order-research-paper": "./scripts/order-research-paper.mjs",
+    "./order-research-paper-text": "./scripts/order-research-paper-text.mjs",
+    "./order-corpus-research-paper": "./scripts/order-corpus-research-paper.mjs",
+    "./order-lean-proof-routine": "./scripts/order-lean-proof-routine.mjs",
+    "./order-lean-proof-standard": "./scripts/order-lean-proof-standard.mjs",
+    "./order-lean-proof-advanced": "./scripts/order-lean-proof-advanced.mjs",
+    "./order-svg-chart": "./scripts/order-svg-chart.mjs",
+    "./order-svg-diagram": "./scripts/order-svg-diagram.mjs",
+    "./order-ebook": "./scripts/order-ebook.mjs",
+    "./order-newsletter-issue": "./scripts/order-newsletter-issue.mjs",
+    "./order-fiction-serial": "./scripts/order-fiction-serial.mjs",
+    "./declare": "./src/declare.mjs",
+    "./metroplat-operations": "./src/metroplat-operations.mjs",
+    "./executor": "./src/executor.mjs",
+    "./kinds": "./src/kinds.mjs",
+    "./kind-profile.schema.json": "./content/schema/kind-profile.schema.json",
+    "./kinds/*.json": "./content/kinds/*.json"
+  },
+  "bin": {
+    "admit-fabrication-order": "scripts/admit-fabrication-order.mjs",
+    "quote-fabrication-order": "scripts/quote-fabrication-order.mjs",
+    "plan-fabrication": "scripts/plan-fabrication.mjs",
+    "assay-fabricated-artifact": "scripts/assay-fabricated-artifact.mjs",
+    "receive-fabrication-delivery": "scripts/receive-fabrication-delivery.mjs",
+    "order-research-paper": "scripts/order-research-paper.mjs",
+    "order-research-paper-text": "scripts/order-research-paper-text.mjs",
+    "order-corpus-research-paper": "scripts/order-corpus-research-paper.mjs",
+    "order-lean-proof-routine": "scripts/order-lean-proof-routine.mjs",
+    "order-lean-proof-standard": "scripts/order-lean-proof-standard.mjs",
+    "order-lean-proof-advanced": "scripts/order-lean-proof-advanced.mjs",
+    "order-svg-chart": "scripts/order-svg-chart.mjs",
+    "order-svg-diagram": "scripts/order-svg-diagram.mjs",
+    "order-ebook": "scripts/order-ebook.mjs",
+    "order-newsletter-issue": "scripts/order-newsletter-issue.mjs",
+    "order-fiction-serial": "scripts/order-fiction-serial.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "src",
+    "scripts",
+    "tools/derive-x-market.mjs",
+    "content/kinds",
+    "content/schema",
+    "LICENSE",
+    "README.md"
+  ],
+  "dependencies": {
+    "@red-cup-engineering/chart-specification-rendering-service": "^0.3.1",
+    "@red-cup-engineering/computer-content-address-engineering-services-section": "^0.3.0",
+    "@red-cup-engineering/computer-data-engineering-services-section": "^0.7.4",
+    "@red-cup-engineering/email-newsletter-engineering-services-section": "^0.1.3",
+    "@red-cup-engineering/json-schema-engineering-services-section": "^0.5.7",
+    "@red-cup-engineering/prov-o-provenance-service": "^0.3.1",
+    "@red-cup-engineering/research-claim-reproduction-service": "^0.3.1",
+    "@red-cup-engineering/research-release-metadata-service": "^0.2.1",
+    "@red-cup-engineering/signcell": "0.18.0-dev.0",
+    "@red-cup-engineering/signcraft": "^0.9.8",
+    "@red-cup-engineering/node-js-function-engineering-services-section": "^0.5.4",
+    "@red-cup-engineering/semiotic-content-address-system": "^0.1.5"
+  },
+  "peerDependencies": {
+    "@red-cup-engineering/ebook-engineering-services-section": "^0.4.2",
+    "@red-cup-engineering/computer-engine": "^0.1.34"
+  }
+}
