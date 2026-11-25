@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { sha256Hex } from "@red-cup-engineering/semiotic-content-address-system";
+import { sha256Digest, sha256Hex } from "@red-cup-engineering/semiotic-content-address-system";
 // Builds the reference fixture: the White Repopulation v0.2.0 paper as a fully worked research-paper
 // order -> specification -> plan -> assay -> receipt, from its public release assets.
 //
@@ -12,7 +12,6 @@ import { sha256Hex } from "@red-cup-engineering/semiotic-content-address-system"
 // produced. The fixture keeps the evidence and the small outputs (claims.json, prov.jsonld) so the
 // evidence-bound assays replay offline; the large documents are kept by ni name and size only.
 import { execFileSync } from "node:child_process";
-import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
@@ -80,7 +79,7 @@ const candidate = {
     subtitle: "The future white, captive births, and the transatlantic reproduction of settler rule",
     thesis: "Institutions preserved the authority to classify and to appropriate reproduction more reliably than the reproductive opportunities of every person classified white.",
     authors: [{ name: "Morgan Sennhauser", role: "accountable-human-author" }],
-    sourceBundle: { locator: `${RELEASE_URL}/white-repopulation-data.tar.gz`, digest: `sha256:${sha256Hex(asset("white-repopulation-data.tar.gz"))}` },
+    sourceBundle: { locator: `${RELEASE_URL}/white-repopulation-data.tar.gz`, digest: sha256Digest(asset("white-repopulation-data.tar.gz")) },
     license: "CC-BY-4.0", language: "en-US",
     keywords: ["settler colonialism", "social reproduction", "historical demography"],
   },

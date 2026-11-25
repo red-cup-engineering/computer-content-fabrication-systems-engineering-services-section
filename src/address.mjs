@@ -4,8 +4,7 @@ import { isRecord } from "@red-cup-engineering/signcell/values";
  * bytes by `addressContent`, JSON by `semanticId` (the semantic identity of the value, not of any one
  * serialization). An output carries exactly one of `bytesBase64`, `text` (UTF-8) or `json`.
  */
-import { addressContent } from "@red-cup-engineering/computer-content-address-engineering-services-section/content-address";
-import { semanticId } from "@red-cup-engineering/semiotic-content-address-system";
+import { addressContent, semanticId } from "@red-cup-engineering/semiotic-content-address-system";
 import { refuse } from "./refusal.mjs";
 
 

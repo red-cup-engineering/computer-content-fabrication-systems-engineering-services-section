@@ -1,11 +1,10 @@
-import { sha256Hex } from "@red-cup-engineering/semiotic-content-address-system";
+import { sha256Digest, sha256Hex } from "@red-cup-engineering/semiotic-content-address-system";
 /**
  * From a kind profile and an order to the data layer's ArtifactFabricationSpecificationCandidate.
  * The record type is the data layer's (`computer-data-engineering-services-section/artifact-fabrication`);
  * this module only fills it from the profile. The source of the specification is the order document:
  * the canonical text of the order, whose digest the admitted specification cites.
  */
-import { createHash } from "node:crypto";
 
 const sortKeys = (value) => {
   if (Array.isArray(value)) return value.map(sortKeys);
@@ -85,7 +84,7 @@ export function specificationCandidate(profile, order, text, { requirements: ext
  */
 export function sourceBindingProblems(specification, bytes) {
   const problems = [];
-  if (specification.source.provenance.digest !== `sha256:${sha256Hex(bytes)}`) problems.push("the admitted specification must cite the exact source document bytes");
+  if (specification.source.provenance.digest !== sha256Digest(bytes)) problems.push("the admitted specification must cite the exact source document bytes");
   const lines = lineCount(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
   const spans = [
     specification.source.provenance.sourceSpan,

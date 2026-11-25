@@ -1,4 +1,4 @@
-import { sha256Hex } from "@red-cup-engineering/semiotic-content-address-system";
+import { sha256Digest } from "@red-cup-engineering/semiotic-content-address-system";
 import { isRecord } from "@red-cup-engineering/signcell/values";
 /**
  * Reading back an admission record the caller hands to a later operation. The records are plain
@@ -21,7 +21,7 @@ export function readAdmission(admission, profiles = kindProfiles()) {
   const profile = profiles.get(specification.artifact?.kind);
   if (profile === undefined || order.kind !== profile.kind) refuse("UNKNOWN_KIND", `the admission names the unknown kind ${JSON.stringify(specification.artifact?.kind)}`, "admission.specification.artifact.kind");
   if (orderDocument(order) !== admission.orderDocument) refuse("ORDER_DOCUMENT_MISMATCH", "orderDocument is not the canonical text of order", "admission.orderDocument");
-  if (specification.source?.provenance?.digest !== `sha256:${sha256Hex(new TextEncoder().encode(admission.orderDocument))}`) refuse("ORDER_DOCUMENT_MISMATCH", "the specification does not cite the order document's bytes", "admission.specification.source");
+  if (specification.source?.provenance?.digest !== sha256Digest(new TextEncoder().encode(admission.orderDocument))) refuse("ORDER_DOCUMENT_MISMATCH", "the specification does not cite the order document's bytes", "admission.specification.source");
   if (specification.type !== "ArtifactFabricationSpecification" || typeof specification.specificationDigest !== "string") refuse("INVALID_SPECIFICATION", "specification must be an admitted ArtifactFabricationSpecification", "admission.specification");
   const { specificationDigest, ...body } = specification;
   if (semanticId(body) !== specificationDigest) refuse("INVALID_SPECIFICATION", "the specification does not hash to its specificationDigest", "admission.specification");
